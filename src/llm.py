@@ -1,7 +1,13 @@
 """LLM factory: returns a Claude model with structured output binding.
 
-Pulls the API key from ANTHROPIC_API_KEY env var. No fallback — fail loud
-so misconfiguration is caught before the graph starts.
+Key resolution order (first non-empty wins):
+    1. ANTHROPIC_API_KEY
+    2. ANTHROPIC_API_KEY_DISCORD  (fallback for shared workspace keys)
+
+Fails loud if neither is present.
+
+Note: Claude Opus 4.7 deprecated the `temperature` parameter, so we omit it
+by default and only pass it for the cheap (Haiku) model where it's still valid.
 """
 
 from __future__ import annotations
@@ -14,22 +20,32 @@ from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
 
-_DEFAULT_MODEL = "claude-opus-4-7"  # Opus for design + validation reasoning
-_CHEAP_MODEL = "claude-haiku-4-5-20251001"  # Haiku for parsing / routine
+_DEFAULT_MODEL = "claude-opus-4-7"
+_CHEAP_MODEL = "claude-haiku-4-5-20251001"
+
+_KEY_ENV_CANDIDATES = ("ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY_DISCORD")
+_TEMPERATURE_SUPPORTED = {_CHEAP_MODEL}
 
 
-def _require_key() -> str:
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if not key:
-        raise RuntimeError(
-            "ANTHROPIC_API_KEY is not set. Copy .env.example to .env and fill in your key."
-        )
-    return key
+def _resolve_key() -> str:
+    for name in _KEY_ENV_CANDIDATES:
+        v = os.environ.get(name, "").strip()
+        if v:
+            return v
+    raise RuntimeError(
+        f"No Anthropic API key found. Set one of: {', '.join(_KEY_ENV_CANDIDATES)}"
+    )
 
 
 def get_llm(model: str = _DEFAULT_MODEL, temperature: float = 0.2) -> ChatAnthropic:
-    _require_key()
-    return ChatAnthropic(model=model, temperature=temperature, max_tokens=4096)
+    kwargs: dict = {
+        "model": model,
+        "max_tokens": 4096,
+        "api_key": _resolve_key(),
+    }
+    if model in _TEMPERATURE_SUPPORTED:
+        kwargs["temperature"] = temperature
+    return ChatAnthropic(**kwargs)
 
 
 def get_structured_llm(schema: type[T], *, cheap: bool = False) -> ChatAnthropic:
