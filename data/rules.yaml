@@ -1,0 +1,142 @@
+# Machine-checkable rules extracted from СП 107.13330 «Теплицы и парники»
+# (and a few cross-references where they're directly cited).
+#
+# Format:
+#   rule_id: short stable identifier (also used as RAG citation key)
+#   sp_clause: pointer back to the source paragraph(s)
+#   summary:   plain-Russian restatement (own words)
+#   severity:  error | warning | info
+#   check:     small DSL for the rules_engine
+#       field: dotted path inside (brief|design|engineering)
+#       op:    one of [>=, <=, >, <, ==, !=, in, not_in, between]
+#       value: scalar | [min, max] | list
+#
+# Only paragraphs with a concrete numeric or enumerated condition are listed.
+# Soft "следует предусматривать, как правило" wording is intentionally skipped.
+
+rules:
+
+  - rule_id: SP107.4.1
+    sp_clause: "СП 107.13330 п. 4.1"
+    summary: "Светопропускание ограждающих конструкций теплиц круглогодичной эксплуатации — не менее 60%."
+    severity: error
+    check:
+      field: design.blocks[*].light_transmittance
+      op: ">="
+      value: 0.60
+    applies_when:
+      brief.greenhouse_type: year_round
+
+  - rule_id: SP107.5.2
+    sp_clause: "СП 107.13330 п. 5.2"
+    summary: "Высота в коньке теплиц круглогодичной эксплуатации не менее 5.0 м (для культур с подвязкой)."
+    severity: error
+    check:
+      field: design.blocks[*].ridge_height_m
+      op: ">="
+      value: 5.0
+    applies_when:
+      brief.greenhouse_type: year_round
+      brief.target_crop: [tomato, cucumber]
+
+  - rule_id: SP107.5.4
+    sp_clause: "СП 107.13330 п. 5.4"
+    summary: "Уклон кровли остеклённых теплиц не менее 26° для самоочищения от снега."
+    severity: warning
+    check:
+      field: design.blocks[*].covering
+      op: "=="
+      value: glass
+    # Slope itself isn't on block yet — placeholder until we add roof_slope_deg.
+
+  - rule_id: SP107.6.3
+    sp_clause: "СП 107.13330 п. 6.3"
+    summary: "Подача воды для полива — не менее пикового часового расхода с коэффициентом 1.2."
+    severity: warning
+    check:
+      field: engineering.water.peak_hourly_m3
+      op: ">"
+      value: 0
+    # Real check is comparison with water source capacity — added when site has capacity field.
+
+  - rule_id: SP107.7.1
+    sp_clause: "СП 107.13330 п. 7.1"
+    summary: "Расчётная температура внутреннего воздуха в теплицах для томата зимой не ниже 16°C."
+    severity: error
+    check:
+      field: engineering.heat.design_temp_diff_c
+      op: ">="
+      value: 30
+    applies_when:
+      brief.greenhouse_type: year_round
+      brief.target_crop: tomato
+
+  - rule_id: SP107.7.4
+    sp_clause: "СП 107.13330 п. 7.4"
+    summary: "Кратность воздухообмена в тёплый период — не менее 50 ч⁻¹."
+    severity: error
+    check:
+      field: engineering.ventilation.summer_air_changes_per_hour
+      op: ">="
+      value: 50
+
+  - rule_id: SP107.7.5
+    sp_clause: "СП 107.13330 п. 7.5"
+    summary: "Площадь открываемых вентиляционных проёмов — не менее 15% площади пола (натуральная вентиляция)."
+    severity: error
+    check:
+      field: engineering.ventilation.required_vent_opening_pct_of_floor
+      op: ">="
+      value: 15.0
+    applies_when:
+      engineering.ventilation.forced_vent_required: false
+
+  - rule_id: SP107.8.2
+    sp_clause: "СП 107.13330 п. 8.2 (ссылка на СП 20.13330)"
+    summary: "Снеговая нагрузка на покрытие учитывается с коэффициентом надёжности 1.4."
+    severity: info
+    check:
+      field: engineering.loads.snow_load_total_kn
+      op: ">"
+      value: 0
+
+  - rule_id: SP107.9.1
+    sp_clause: "СП 107.13330 п. 9.1"
+    summary: "Расход тепла на 1 м² теплицы (тип круглогодичная) для расчётной зимней температуры -25°C — порядка 250 Вт/м²."
+    severity: warning
+    check:
+      field: engineering.heat.total_peak_load_kw
+      op: ">"
+      value: 0
+    # Comparison against floor area added in rules_engine when threshold known.
+
+  - rule_id: SP107.10.3
+    sp_clause: "СП 107.13330 п. 10.3"
+    summary: "Под подсобные помещения отводится не менее 8% площади комплекса."
+    severity: warning
+    check:
+      field: design.aux_share_pct
+      op: ">="
+      value: 8.0
+    # Computed virtual field — handled in rules_engine.
+
+  - rule_id: SP107.10.4
+    sp_clause: "СП 107.13330 п. 10.4"
+    summary: "Минимальная ширина прохода между блоками теплиц — 6 м (для проезда техники)."
+    severity: warning
+    check:
+      field: design.min_aisle_width_m
+      op: ">="
+      value: 6.0
+    # Computed virtual field — relies on multiple blocks.
+
+  - rule_id: SP107.11.1
+    sp_clause: "СП 107.13330 п. 11.1"
+    summary: "Освещённость рассадных отделений — не ниже целевого DLI культуры (досветка обязательна зимой при дефиците естественного света)."
+    severity: warning
+    check:
+      field: engineering.light.supplemental_required
+      op: "=="
+      value: true
+    applies_when:
+      brief.greenhouse_type: year_round

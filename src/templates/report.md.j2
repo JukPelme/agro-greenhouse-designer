@@ -1,0 +1,122 @@
+# Предпроектное решение: {{ state.brief.project_name }}
+
+**Регион:** {{ state.brief.site.region }}
+**Тип теплицы:** {{ state.brief.greenhouse_type.value }}
+**Культура:** {{ state.brief.target_crop.value }}
+**Целевая урожайность:** {{ state.brief.target_annual_yield_t }} т/год
+**Дата генерации:** {{ "сейчас" }}
+
+---
+
+## 1. Исходные данные и анализ участка
+
+{{ state.analyst_notes }}
+
+**Климатические параметры (СП 131.13330):**
+
+| Параметр | Значение |
+| --- | --- |
+| Расчётная зимняя температура (t5) | {{ state.climate.t_design_winter_c }} °C |
+| Расчётная летняя температура | {{ state.climate.t_design_summer_c }} °C |
+| Градусо-сутки отопления | {{ state.climate.heating_degree_days }} |
+| Длительность отопительного периода | {{ state.climate.heating_period_days }} сут |
+| Снеговая нагрузка | {{ state.climate.snow_load_kpa }} кПа |
+| Ветровая нагрузка | {{ state.climate.wind_load_kpa }} кПа |
+| Солнечная радиация (зимой) | {{ state.climate.solar_radiation_winter_mj_m2_day }} МДж/м²/сут |
+
+---
+
+## 2. Проектное решение (вариант {{ state.design.variant_id }})
+
+**Обоснование:** {{ state.design.rationale }}
+
+**Общая площадь под выращивание:** {{ "%.0f" | format(state.design.total_growing_area_m2) }} м²
+**Площадь комплекса (с подсобками):** {{ state.design.estimated_footprint_m2 }} м²
+
+### Блоки теплиц
+
+{% for b in state.design.blocks %}
+- **{{ b.name }}** — {{ b.length_m }} × {{ b.width_m }} м (площадь {{ "%.0f" | format(b.floor_area_m2) }} м²), высота {{ b.eave_height_m }}/{{ b.ridge_height_m }} м, {{ b.covering.value }} (τ={{ b.light_transmittance }})
+{% endfor %}
+
+### Подсобные зоны
+
+{% if state.design.aux_zones %}
+{% for z in state.design.aux_zones %}
+- **{{ z.name }}** — {{ z.area_m2 }} м² ({{ z.purpose }})
+{% endfor %}
+{% else %}
+_Не предложены._
+{% endif %}
+
+---
+
+## 3. Инженерные расчёты
+
+### 3.1. Теплоснабжение
+
+- Расчётная разница температур: **{{ state.engineering.heat.design_temp_diff_c }} °C**
+- Площадь ограждающих конструкций: **{{ state.engineering.heat.envelope_area_m2 }} м²**
+- Средневзвешенный коэффициент теплопередачи U: **{{ state.engineering.heat.overall_heat_transfer_coef_w_m2k }} Вт/(м²·К)**
+- Трансмиссионные теплопотери: **{{ state.engineering.heat.transmission_loss_kw }} кВт**
+- Инфильтрационные теплопотери: **{{ state.engineering.heat.infiltration_loss_kw }} кВт**
+- **Пиковая тепловая нагрузка: {{ state.engineering.heat.total_peak_load_kw }} кВт**
+- Годовая потребность в тепле: **{{ state.engineering.heat.annual_heat_demand_mwh }} МВт·ч**
+
+### 3.2. Водоснабжение
+
+- Суточный расход: **{{ state.engineering.water.daily_demand_m3 }} м³/сут**
+- Пиковый часовой расход: **{{ state.engineering.water.peak_hourly_m3 }} м³/ч**
+- Годовой расход: **{{ "%.0f" | format(state.engineering.water.annual_demand_m3) }} м³/год**
+- Способ полива: {{ state.engineering.water.irrigation_method }}
+
+### 3.3. Освещённость и досветка
+
+- Целевой DLI: **{{ state.engineering.light.target_dli_mol_m2_day }} моль/м²/сут**
+- Естественный DLI зимой: **{{ state.engineering.light.natural_dli_winter_mol_m2_day }} моль/м²/сут**
+{% if state.engineering.light.supplemental_required %}
+- **Досветка требуется**: установленная мощность {{ state.engineering.light.installed_lamp_power_w_m2 }} Вт/м², расход {{ "%.0f" | format(state.engineering.light.supplemental_kwh_year) }} кВт·ч/год
+{% else %}
+- Досветка не требуется.
+{% endif %}
+
+### 3.4. Вентиляция
+
+- Целевая кратность воздухообмена летом: **{{ state.engineering.ventilation.summer_air_changes_per_hour }} ч⁻¹**
+- Площадь открываемых проёмов: **{{ state.engineering.ventilation.required_vent_opening_pct_of_floor }}% площади пола**
+- Принудительная вентиляция: **{{ "требуется" if state.engineering.ventilation.forced_vent_required else "не требуется" }}**
+
+### 3.5. Нагрузки
+
+- Снеговая нагрузка на покрытие: **{{ state.engineering.loads.snow_load_total_kn }} кН**
+- Ветровая нагрузка на стены: **{{ state.engineering.loads.wind_load_total_kn }} кН**
+{% if state.engineering.loads.notes %}
+- {{ state.engineering.loads.notes }}
+{% endif %}
+
+---
+
+## 4. Проверка по СП 107.13330
+
+Проверено правил: **{{ state.validation.rules_checked }}**
+
+{% if state.validation.issues %}
+{% for issue in state.validation.issues %}
+### {{ issue.severity.value | upper }} — {{ issue.rule_id }}
+
+{{ issue.message }}
+
+- Фактическое значение: `{{ issue.actual_value }}`
+- Требуется: `{{ issue.required_value }}`
+{% if issue.sp_citation %}
+- **Источник:** {{ issue.sp_citation }}
+{% endif %}
+
+{% endfor %}
+{% else %}
+✓ Все проверяемые требования СП 107.13330 удовлетворены.
+{% endif %}
+
+---
+
+_Сгенерировано системой agro-greenhouse-designer. Расчёты — предпроектные, для последующей разработки рабочей документации требуется верификация специалистом-проектировщиком._
