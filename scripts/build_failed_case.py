@@ -80,6 +80,16 @@ def main() -> None:
 
     (ROOT / "docs" / "failed_example.md").write_text(state.report_markdown, encoding="utf-8")
 
+    # Render PDF for the failed case too.
+    from src.render import markdown_to_pdf
+    pdf_path = ROOT / "docs" / "report_failed_v1.pdf"
+    try:
+        markdown_to_pdf(md_text=state.report_markdown, base_url=ROOT / "docs", out_path=pdf_path)
+        state.report_pdf_path = str(pdf_path.relative_to(ROOT))
+        print(f"PDF: {pdf_path}")
+    except Exception as exc:
+        print(f"PDF skipped: {exc}")
+
     n_errors = sum(1 for i in state.validation.issues if i.severity.value == "error")
     print(f"Failed-case state pickled: {out_pkl}")
     print(f"Charts: {chart_dir} ({len(chart_files)} files)")
