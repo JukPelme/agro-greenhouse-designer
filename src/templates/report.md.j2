@@ -55,6 +55,10 @@ _Не предложены._
 
 ### 3.1. Теплоснабжение
 
+{% if charts.energy_balance %}
+![Теплопотери и пиковая нагрузка]({{ charts.energy_balance }})
+{% endif %}
+
 - Расчётная разница температур: **{{ state.engineering.heat.design_temp_diff_c }} °C**
 - Площадь ограждающих конструкций: **{{ state.engineering.heat.envelope_area_m2 }} м²**
 - Средневзвешенный коэффициент теплопередачи U: **{{ state.engineering.heat.overall_heat_transfer_coef_w_m2k }} Вт/(м²·К)**
@@ -65,12 +69,20 @@ _Не предложены._
 
 ### 3.2. Водоснабжение
 
+{% if charts.water_demand %}
+![Расход воды]({{ charts.water_demand }})
+{% endif %}
+
 - Суточный расход: **{{ state.engineering.water.daily_demand_m3 }} м³/сут**
 - Пиковый часовой расход: **{{ state.engineering.water.peak_hourly_m3 }} м³/ч**
 - Годовой расход: **{{ "%.0f" | format(state.engineering.water.annual_demand_m3) }} м³/год**
 - Способ полива: {{ state.engineering.water.irrigation_method }}
 
 ### 3.3. Освещённость и досветка
+
+{% if charts.light_balance %}
+![Баланс освещённости]({{ charts.light_balance }})
+{% endif %}
 
 - Целевой DLI: **{{ state.engineering.light.target_dli_mol_m2_day }} моль/м²/сут**
 - Естественный DLI зимой: **{{ state.engineering.light.natural_dli_winter_mol_m2_day }} моль/м²/сут**
@@ -80,13 +92,19 @@ _Не предложены._
 - Досветка не требуется.
 {% endif %}
 
-### 3.4. Вентиляция
+### 3.4. Годовое энергопотребление
+
+{% if charts.annual_energy %}
+![Структура годового энергопотребления]({{ charts.annual_energy }})
+{% endif %}
+
+### 3.5. Вентиляция
 
 - Целевая кратность воздухообмена летом: **{{ state.engineering.ventilation.summer_air_changes_per_hour }} ч⁻¹**
 - Площадь открываемых проёмов: **{{ state.engineering.ventilation.required_vent_opening_pct_of_floor }}% площади пола**
 - Принудительная вентиляция: **{{ "требуется" if state.engineering.ventilation.forced_vent_required else "не требуется" }}**
 
-### 3.5. Нагрузки
+### 3.6. Нагрузки
 
 - Снеговая нагрузка на покрытие: **{{ state.engineering.loads.snow_load_total_kn }} кН**
 - Ветровая нагрузка на стены: **{{ state.engineering.loads.wind_load_total_kn }} кН**

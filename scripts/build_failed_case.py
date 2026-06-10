@@ -7,10 +7,13 @@ from __future__ import annotations
 
 import pickle
 import sys
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
+
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from src.graph import graph
 from src.schemas.project import (
@@ -21,21 +24,19 @@ from src.schemas.project import (
     SoilType,
 )
 from src.schemas.state import GraphState
+from src.viz import render_all
 
-# Impossible request: round-year tomato in Novosibirsk on a *tiny* plot with
-# absurdly high yield. Designer cannot honor the ridge-height / transmittance
-# constraints AND fit on the plot AND hit the yield target simultaneously.
 BAD_BRIEF = ProjectBrief(
     project_name="Тестовый отказ системы",
     greenhouse_type=GreenhouseType.YEAR_ROUND,
     target_crop=CropType.TOMATO,
-    target_annual_yield_t=2000.0,           # ~2 kt/year is huge
+    target_annual_yield_t=2000.0,
     site=SiteParameters(
         region="Новосибирская область",
-        plot_area_m2=500.0,                  # 500 м² — заведомо мало
+        plot_area_m2=500.0,
         plot_length_m=25.0,
         plot_width_m=20.0,
-        groundwater_depth_m=0.5,             # очень высокий уровень
+        groundwater_depth_m=0.5,
         has_grid_power=False,
         has_water_supply=False,
         has_gas_supply=False,
@@ -49,6 +50,29 @@ def main() -> None:
     raw = graph.invoke({"brief": BAD_BRIEF}, {"recursion_limit": 25})
     state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
 
+    # Use a dedicated variant_id so failed-case charts don't overwrite happy-case.
+    state.design.variant_id = "failed_v1"
+
+    # Re-render the charts into a separate directory and re-build the report.
+    chart_dir = ROOT / "docs" / "charts" / "failed_v1"
+    chart_files = render_all(state, chart_dir)
+    chart_rel = {
+        name: f"charts/{state.design.variant_id}/{fname}"
+        for name, fname in chart_files.items()
+        if fname
+    }
+    env = Environment(
+        loader=FileSystemLoader(str(ROOT / "src" / "templates")),
+        autoescape=select_autoescape(),
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+    state.report_markdown = env.get_template("report.md.j2").render(
+        state=state,
+        generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),
+        charts=chart_rel,
+    )
+
     out_pkl = ROOT / "demo_cache" / "failed_run.pkl"
     out_pkl.parent.mkdir(exist_ok=True)
     with out_pkl.open("wb") as fh:
@@ -58,6 +82,7 @@ def main() -> None:
 
     n_errors = sum(1 for i in state.validation.issues if i.severity.value == "error")
     print(f"Failed-case state pickled: {out_pkl}")
+    print(f"Charts: {chart_dir} ({len(chart_files)} files)")
     print(f"Iterations: {state.iteration} / max {state.max_iterations}")
     print(f"Validation: {len(state.validation.issues)} issues ({n_errors} errors)")
     for issue in state.validation.issues[:6]:
