@@ -3,7 +3,7 @@
 Used to populate demo_cache/default_run.pkl so the Streamlit demo can replay
 a full session without spending LLM tokens.
 
-Requires ANTHROPIC_API_KEY in the env.
+Requires ANTHROPIC_API_KEY (or ANTHROPIC_API_KEY_DISCORD) in the env.
 """
 
 from __future__ import annotations
@@ -23,6 +23,7 @@ from src.schemas.project import (
     SiteParameters,
     SoilType,
 )
+from src.schemas.state import GraphState
 
 
 def main() -> None:
@@ -41,12 +42,23 @@ def main() -> None:
         notes="Стандартное портфолио-демо.",
     )
 
-    final = graph.invoke({"brief": brief})
+    raw = graph.invoke({"brief": brief}, {"recursion_limit": 25})
+
+    # LangGraph returns a dict; rebuild GraphState so the UI can use attribute
+    # access (state.report_markdown, state.validation.issues, …).
+    state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
+
     out = ROOT / "demo_cache" / "default_run.pkl"
     out.parent.mkdir(exist_ok=True)
     with out.open("wb") as fh:
-        pickle.dump(final, fh)
-    print(f"Cached final state to {out}")
+        pickle.dump(state, fh)
+
+    # Also persist the rendered report next to docs/ for at-a-glance review.
+    (ROOT / "docs" / "example_report.md").write_text(state.report_markdown, encoding="utf-8")
+
+    print(f"Cached final state to {out} ({out.stat().st_size} bytes)")
+    print(f"Rendered report to docs/example_report.md ({len(state.report_markdown)} chars)")
+    print(f"Validation issues: {len(state.validation.issues)}, iterations: {state.iteration}")
 
 
 if __name__ == "__main__":

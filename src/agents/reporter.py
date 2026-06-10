@@ -6,6 +6,7 @@ Outputs: GraphState.report_markdown
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -30,6 +31,9 @@ def reporter_node(state: GraphState) -> dict:
         return {"errors": ["Reporter: нет design или engineering для отчёта."]}
 
     template = _env().get_template("report.md.j2")
-    md = template.render(state=state)
+    md = template.render(
+        state=state,
+        generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),
+    )
 
     return {"report_markdown": md}

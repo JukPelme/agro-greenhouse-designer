@@ -38,4 +38,4 @@ chroma_db/
 Thumbs.db
 
 # Demo cache — large precomputed traces
-demo_cache/*.pkl
+# demo_cache pickles ARE committed — they power the no-API-key demo mode
