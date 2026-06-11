@@ -24,6 +24,7 @@ def validator_node(state: GraphState) -> dict:
         brief=state.brief,
         design=state.design,
         engineering=state.engineering,
+        climate=state.climate,
     )
 
     # Enrich each issue with a literal SP citation via RAG.

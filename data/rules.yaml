@@ -11,10 +11,10 @@ rules:
 
   - rule_id: SP107.4.4-year-round
     sp_clause: "СП 107.13330 п. 4.4"
-    summary: "Расстояние между зимними теплицами в составе ТОК/РОТК — не менее 6 м."
+    summary: "Расстояние (разрыв) между зимними теплицами в составе ТОК/РОТК — не менее 6 м для проезда техники."
     severity: error
     check:
-      field: design.min_aisle_width_m
+      field: design.min_block_spacing_m
       op: ">="
       value: 6.0
     applies_when:
@@ -22,10 +22,10 @@ rules:
 
   - rule_id: SP107.4.4-seasonal
     sp_clause: "СП 107.13330 п. 4.4"
-    summary: "Расстояние между сезонными теплицами — не менее 1,5 м."
+    summary: "Расстояние (разрыв) между сезонными теплицами — не менее 1,5 м."
     severity: error
     check:
-      field: design.min_aisle_width_m
+      field: design.min_block_spacing_m
       op: ">="
       value: 1.5
     applies_when:
@@ -139,7 +139,7 @@ rules:
 
   - rule_id: SP107.5.14-snow
     sp_clause: "СП 107.13330 п. 5.14"
-    summary: "Коэффициент перегрузки расчётной снеговой нагрузки — 1,4."
+    summary: "Self-check конвейера: коэффициент перегрузки снеговой нагрузки в calc-модуле = 1,4 (как требует СП). Фиксирует регрессию, если кто-то поменяет константу."
     severity: info
     check:
       field: engineering.loads.snow_overload_factor
@@ -199,9 +199,9 @@ rules:
       op: ">="
       value: 40.0
 
-  - rule_id: SP107.7.18
+  - rule_id: SP107.7.18-south
     sp_clause: "СП 107.13330 п. 7.18"
-    summary: "Площадь проёмов естественной вентиляции в многопролётных теплицах — не менее 20% площади ограждения (10% севернее 60° с.ш.)."
+    summary: "Площадь проёмов естественной вентиляции в многопролётных теплицах для овощей — не менее 20% площади ограждения (для районов ЮЖНЕЕ 60° с.ш.)."
     severity: warning
     check:
       field: engineering.ventilation.opening_share_of_envelope_pct
@@ -209,6 +209,19 @@ rules:
       value: 20.0
     applies_when:
       engineering.ventilation.forced_vent_required: false
+      climate.is_northern: false
+
+  - rule_id: SP107.7.18-north
+    sp_clause: "СП 107.13330 п. 7.18"
+    summary: "Площадь проёмов естественной вентиляции в многопролётных теплицах — не менее 10% площади ограждения (для районов СЕВЕРНЕЕ 60° с.ш.)."
+    severity: warning
+    check:
+      field: engineering.ventilation.opening_share_of_envelope_pct
+      op: ">="
+      value: 10.0
+    applies_when:
+      engineering.ventilation.forced_vent_required: false
+      climate.is_northern: true
 
   # ── ОСВЕЩЕНИЕ (8.3) ─────────────────────────────────────────────
 
@@ -228,19 +241,17 @@ rules:
     summary: "Высота конька должна быть выше высоты по водостоку как минимум на 0,5 м — иначе кровля не имеет уклона для стока."
     severity: error
     check:
-      field: design.blocks[*].ridge_height_m
-      op: ">"
-      value: 0
-    # Содержательная проверка (ridge > eave + 0.5) делается в rules_engine.
+      check_type: custom
+      name: ridge_above_eave
 
   - rule_id: ENG.2-aux-share
     sp_clause: "Инженерная проверка (не из СП): обоснованная доля подсобок"
-    summary: "Подсобные зоны должны занимать 5–30% площади комплекса."
+    summary: "Подсобные зоны должны занимать 5–30% площади комплекса. Меньше — нехватка для обслуживания; больше — неэффективное использование участка."
     severity: warning
     check:
       field: design.aux_share_pct
-      op: ">="
-      value: 5.0
+      op: between
+      value: [5.0, 30.0]
 
   - rule_id: ENG.3-light-min
     sp_clause: "Инженерная проверка (не из СП): минимальное светопропускание для круглогодичной"
