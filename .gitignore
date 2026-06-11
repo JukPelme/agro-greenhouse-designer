@@ -39,3 +39,9 @@ Thumbs.db
 
 # Demo cache — large precomputed traces
 # demo_cache pickles ARE committed — they power the no-API-key demo mode
+
+# Intermediate Designer iterations (v2, v3, ...) — only v1 and failed_v1 are tracked
+docs/charts/v[2-9]/
+docs/charts/v[1-9][0-9]/
+docs/report_v[2-9].pdf
+docs/report_v[1-9][0-9].pdf

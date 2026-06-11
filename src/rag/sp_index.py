@@ -46,8 +46,14 @@ def _ensure_loaded() -> None:
 
 
 def _clause_from_rule_id(rule_id: str) -> str | None:
-    """SP107.5.2 → '5.2'. SP107.10.4 → '10.4'."""
-    m = re.match(r"SP107\.(.+)", rule_id)
+    """Strip the SP107 prefix and any disambiguating suffix.
+
+    Examples:
+        SP107.5.11        → '5.11'
+        SP107.4.4-seasonal → '4.4'
+        ENG.1-ridge       → None (engineering rule, no SP citation)
+    """
+    m = re.match(r"SP107\.([\d.]+)", rule_id)
     return m.group(1) if m else None
 
 
@@ -82,6 +88,10 @@ def cite_sp_paragraph(rule_id: str) -> str | None:
         return clause
 
     clause_id = _clause_from_rule_id(rule_id)
+
+    # ENG rules (no SP clause) — return their own label, never hit the RAG.
+    if not clause_id:
+        return clause
 
     # 1. Try exact clause-id match via metadata filter.
     if clause_id:
