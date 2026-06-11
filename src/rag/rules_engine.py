@@ -148,8 +148,41 @@ def _check_ridge_above_eave(
     return desc, "ridge ≥ eave + 0.5 м для каждого блока"
 
 
+# Typical achievable yield (t/ha/year) for greenhouse-grown crops. Source:
+# Russian VNII Ovoshchevodstva guides + Cornell CEA references. Pre-design
+# numbers — production planning should use crop-cycle-specific values.
+_CROP_YIELD_KG_M2: dict[str, float] = {
+    "tomato": 50.0,       # 4-6 trusses, year-round high-wire
+    "cucumber": 28.0,     # 8-10 month cycle in heated greenhouse
+    "lettuce": 35.0,      # multi-cycle hydroponics
+    "herbs": 12.0,        # cut-and-come-again
+    "strawberry": 25.0,   # double-crop production
+}
+
+
+def _check_yield_feasibility(
+    brief: ProjectBrief,
+    design: DesignVariant,
+    engineering: EngineeringReport,  # noqa: ARG001
+) -> tuple[str, str] | None:
+    """ENG.5: growing area × crop norm must cover ≥90% of the brief's target yield."""
+    growing_area = sum(b.floor_area_m2 for b in design.blocks)
+    crop_key = brief.target_crop.value
+    crop_norm = _CROP_YIELD_KG_M2.get(crop_key, 30.0)
+    capacity_t = growing_area * crop_norm / 1000
+    target_t = brief.target_annual_yield_t
+    required_capacity = target_t * 0.9  # 10% tolerance for losses, headhouse, etc.
+    if capacity_t >= required_capacity:
+        return None
+    return (
+        f"вмещает ~{capacity_t:.0f} т/год ({crop_key} @ {crop_norm} кг/м² × {growing_area:.0f} м²)",
+        f">= {required_capacity:.0f} т/год (90% от ТЗ {target_t} т)",
+    )
+
+
 _CUSTOM_CHECKS: dict[str, Callable[..., tuple[str, str] | None]] = {
     "ridge_above_eave": _check_ridge_above_eave,
+    "yield_feasibility": _check_yield_feasibility,
 }
 
 

@@ -64,16 +64,12 @@ def compute_loads(
 
     # Conservatively include trellis load when crop is unknown — better to
     # over-design than to silently skip a real load. Frame engineers expect this.
-    has_trellis = crop is None or crop in _TRELLIS_CROPS
-    trellis_note = ""
-    if has_trellis:
-        trellis_note = f"Шпалерная нагрузка {_TRELLIS_LOAD_N_M2} Н/м² (γ={_TRELLIS_OVERLOAD})."
-
+    # Trellis info is rendered as its own field in the report — keep notes for
+    # exceptional remarks only (e.g. heavy snow zone).
     notes: list[str] = []
     if climate.snow_load_kpa >= 2.5:
         notes.append("Высокая снеговая нагрузка — требуется усиленный каркас и/или подогрев кровли.")
-    if trellis_note:
-        notes.append(trellis_note)
+    _ = crop  # crop drives trellis_load (already in the typed result), no extra note here
 
     return StructuralLoadsResult(
         snow_load_total_kn=round(snow_kn, 0),

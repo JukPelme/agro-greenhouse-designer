@@ -272,3 +272,11 @@ rules:
       field: engineering.ventilation.summer_air_changes_per_hour
       op: ">="
       value: 40.0
+
+  - rule_id: ENG.5-yield-feasibility
+    sp_clause: "Инженерная проверка (не из СП): достижимость целевой урожайности"
+    summary: "Площадь выращивания × норма культуры должна покрывать минимум 90% целевой урожайности из ТЗ. Иначе участок физически не вмещает заявленный объём продукции."
+    severity: error
+    check:
+      check_type: custom
+      name: yield_feasibility

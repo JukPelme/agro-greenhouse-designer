@@ -59,3 +59,21 @@ def test_heat_balance_polycarbonate_reduces_load():
     pc_result = compute_heat_balance(pc_design, climate)
 
     assert pc_result.total_peak_load_kw < glass_result.total_peak_load_kw
+
+
+
+def test_seasonal_uses_milder_design_temp():
+    """Seasonal greenhouse should compute against +5°C, not the winter t5 = -25°C."""
+    from src.schemas.project import GreenhouseType
+    climate = lookup_climate("Московская область")
+
+    yr = compute_heat_balance(_sample_design(), climate, greenhouse_type=GreenhouseType.YEAR_ROUND)
+    sea = compute_heat_balance(_sample_design(), climate, greenhouse_type=GreenhouseType.SEASONAL)
+
+    # year_round: ΔT = 18 − (−25) = 43; seasonal: 18 − 5 = 13
+    assert yr.design_temp_diff_c == 43.0
+    assert sea.design_temp_diff_c == 13.0
+
+    # Peak load and annual heat for seasonal must be a fraction of year_round
+    assert sea.total_peak_load_kw < yr.total_peak_load_kw / 2
+    assert sea.annual_heat_demand_mwh < yr.annual_heat_demand_mwh / 3

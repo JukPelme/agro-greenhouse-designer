@@ -46,11 +46,16 @@ plt.rcParams.update(
 
 
 def _save(fig, out_dir: Path, name: str) -> str:
+    """Save with a transparent figure background so charts blend on both dark
+    and light Markdown viewers (Streamlit dark theme, GitHub light, PDF white).
+    Axes keep their own white background for readability of labels.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"{name}.png"
-    fig.savefig(path)
+    fig.patch.set_alpha(0)
+    fig.savefig(path, transparent=False, facecolor="none")
     plt.close(fig)
-    return path.name  # relative to out_dir — caller composes the full Markdown path
+    return path.name
 
 
 def energy_balance_chart(state: GraphState, out_dir: Path) -> str:

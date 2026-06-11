@@ -1,27 +1,61 @@
-"""Heat balance + СП 107.13330 п. 7.9 supply temp, п. 7.13 share to lower zone."""
+"""Heat balance per СП 107.13330 п. 7.9 (supply temp), п. 7.13 (lower-zone share).
+
+Branches by greenhouse_type:
+- year_round  → ΔT from the design winter temperature t5 (worst-case heating)
+- seasonal    → ΔT from a representative early/late-season night temperature
+                (a film cover doesn't operate through the deep winter)
+- nursery     → treated as seasonal by default
+"""
 
 from __future__ import annotations
 
 from ..schemas.calc_results import HeatLossResult
 from ..schemas.design import CoveringMaterial, DesignVariant
-from ..schemas.project import ClimateData
+from ..schemas.project import ClimateData, GreenhouseType
 
 _U_BY_COVERING: dict[CoveringMaterial, float] = {
-    CoveringMaterial.GLASS: 6.4,
-    CoveringMaterial.POLYCARBONATE: 3.6,
-    CoveringMaterial.POLYETHYLENE: 7.5,
+    CoveringMaterial.GLASS: 6.4,           # single glazing
+    CoveringMaterial.POLYCARBONATE: 3.6,   # honeycomb 10 mm
+    CoveringMaterial.POLYETHYLENE: 4.2,    # double film with air gap
 }
 
 _INFILTRATION_FACTOR = 0.20
+
+# Lowest outside temperature a seasonal/nursery greenhouse still has to handle
+# (representative cold spring/autumn night). Production code would derive this
+# from monthly climate data; for pre-design a single value is enough.
+_SEASONAL_T_DESIGN_C = 5.0
+
+
+def _design_outside_temp(greenhouse_type: GreenhouseType, climate: ClimateData) -> float:
+    if greenhouse_type == GreenhouseType.YEAR_ROUND:
+        return climate.t_design_winter_c
+    return _SEASONAL_T_DESIGN_C
+
+
+def _heating_period_days(greenhouse_type: GreenhouseType, climate: ClimateData) -> int:
+    if greenhouse_type == GreenhouseType.YEAR_ROUND:
+        return climate.heating_period_days
+    # Seasonal heating mainly in spring shoulders ≈ 60 days
+    return 60
+
+
+def _heating_degree_days(greenhouse_type: GreenhouseType, climate: ClimateData) -> float:
+    if greenhouse_type == GreenhouseType.YEAR_ROUND:
+        return climate.heating_degree_days
+    # Approximate seasonal HDD as average ΔT × period days
+    return (18.0 - _SEASONAL_T_DESIGN_C) * _heating_period_days(greenhouse_type, climate)
 
 
 def compute_heat_balance(
     design: DesignVariant,
     climate: ClimateData,
+    greenhouse_type: GreenhouseType = GreenhouseType.YEAR_ROUND,
     t_indoor_c: float = 18.0,
     supply_temp_c: float = 95.0,
 ) -> HeatLossResult:
-    delta_t = t_indoor_c - climate.t_design_winter_c
+    t_outside = _design_outside_temp(greenhouse_type, climate)
+    delta_t = t_indoor_c - t_outside
 
     envelope_area = sum(b.envelope_area_m2 for b in design.blocks)
     weighted_u = sum(_U_BY_COVERING[b.covering] * b.envelope_area_m2 for b in design.blocks) / envelope_area
@@ -30,11 +64,11 @@ def compute_heat_balance(
     infiltration_w = transmission_w * _INFILTRATION_FACTOR
     total_w = transmission_w + infiltration_w
 
-    annual_kwh = weighted_u * envelope_area * climate.heating_degree_days * 24 / 1000
+    hdd = _heating_degree_days(greenhouse_type, climate)
+    annual_kwh = weighted_u * envelope_area * hdd * 24 / 1000
     annual_kwh += annual_kwh * _INFILTRATION_FACTOR
 
-    # СП 107.13330 п. 7.13: не менее 40% теплоты подаётся в зону 0..1 м над почвой.
-    # Designer может ставить выше через расчёт системы; здесь обоснованный default.
+    # СП 107.13330 п. 7.13: ≥ 40% of heat to the 0..1 m zone.
     share_lower = 45.0
 
     return HeatLossResult(

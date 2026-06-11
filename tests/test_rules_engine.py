@@ -371,3 +371,66 @@ def test_every_rule_resolves_its_field_on_a_complete_design():
     issues, _ = evaluate_rules(brief, design, eng, climate=climate)
     no_data = [i for i in issues if "не удалось проверить" in i.message.lower()]
     assert not no_data, f"These rules can not resolve their field: {[i.rule_id for i in no_data]}"
+
+
+
+def test_seasonal_disables_supplemental_lighting():
+    """Seasonal greenhouse → no supplemental lighting regardless of region."""
+    from src.calc.lighting import compute_lighting
+    from src.schemas.project import GreenhouseType
+    climate = lookup_climate("Новосибирская область")
+    design = DesignVariant(
+        variant_id="seasonal",
+        rationale="seasonal cucumber",
+        blocks=[
+            GreenhouseBlock(
+                name="Блок 1",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.POLYETHYLENE, light_transmittance=0.85,
+            ),
+        ],
+        estimated_footprint_m2=1500,
+    )
+    li = compute_lighting(design, CropType.CUCUMBER, climate, greenhouse_type=GreenhouseType.SEASONAL)
+    assert li.supplemental_required is False
+    assert li.installed_lamp_power_w_m2 == 0.0
+    assert li.supplemental_kwh_year == 0.0
+
+
+
+def test_yield_too_high_triggers_eng5():
+    """500 t/year of cucumber on a 96×12 m × 1 block (1152 m²) layout — capacity ~32 t.
+
+    Should fire ENG.5-yield-feasibility as ERROR.
+    """
+    from src.schemas.design import LayoutZone
+    climate = lookup_climate("Краснодарский край")
+    brief = ProjectBrief(
+        project_name="too ambitious",
+        greenhouse_type=GreenhouseType.YEAR_ROUND,
+        target_crop=CropType.CUCUMBER,
+        target_annual_yield_t=500.0,  # impossible on tiny floor area
+        site=SiteParameters(
+            region="Краснодарский край",
+            plot_area_m2=2000, plot_length_m=100, plot_width_m=20,
+        ),
+    )
+    design = DesignVariant(
+        variant_id="tiny",
+        rationale="single small block",
+        blocks=[
+            GreenhouseBlock(
+                name="Блок 1",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+                glass_thickness_mm=4.0,
+            ),
+        ],
+        aux_zones=[LayoutZone(name="Aux", area_m2=200.0, purpose="ops")],
+        estimated_footprint_m2=1500,
+    )
+    eng = _engineer(design, climate, CropType.CUCUMBER)
+    issues, _ = evaluate_rules(brief, design, eng, climate=climate)
+    eng5 = [i for i in issues if i.rule_id == "ENG.5-yield-feasibility"]
+    assert eng5, "ENG.5 must fire when capacity is way below target"
+    assert eng5[0].severity.value == "error"
