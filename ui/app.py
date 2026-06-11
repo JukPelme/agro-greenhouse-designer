@@ -79,6 +79,19 @@ with st.sidebar:
         live_key = st.text_input("ANTHROPIC_API_KEY", type="password")
         if live_key:
             os.environ["ANTHROPIC_API_KEY"] = live_key
+        st.caption(
+            "Ключ остаётся в RAM сервера только во время сессии, не пишется "
+            "на диск и не логируется. При перезагрузке страницы — стирается. "
+            "Передаётся напрямую в Anthropic API через HTTPS. Платформа "
+            "Streamlit Cloud видит его в памяти процесса как любой другой "
+            "пользовательский ввод — для одноразового тестового запуска ок, "
+            "для production-нагрузки используйте свой self-hosted деплой."
+        )
+        if st.button("Очистить ключ из сессии", use_container_width=True):
+            os.environ.pop("ANTHROPIC_API_KEY", None)
+            live_key = None
+            st.success("Ключ удалён из окружения.")
+            st.rerun()
 
     st.divider()
     st.markdown(
