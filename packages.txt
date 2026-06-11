@@ -1,0 +1,7 @@
+# Streamlit Cloud apt packages: weasyprint requires Pango/Cairo system libs.
+libpango-1.0-0
+libpangoft2-1.0-0
+libharfbuzz0b
+libcairo2
+libgdk-pixbuf-2.0-0
+fonts-dejavu-core

@@ -1,15 +1,16 @@
-"""Streamlit demo UI for the agro-greenhouse-designer.
+"""Streamlit demo UI for agro-greenhouse-designer.
 
-Two modes:
-  - "Демо-режим" — replays a pre-recorded GraphState from demo_cache/
-                   (no LLM cost, works without an API key)
-  - "Свой ключ"  — user pastes their own ANTHROPIC_API_KEY into the sidebar
-                   and runs the graph live
+Designed to run cleanly on Streamlit Cloud:
+- Demo mode replays a pickled GraphState from demo_cache/  → no LLM cost.
+- Failed-case mode replays a refusal scenario for the same reason.
+- Live mode is gated behind a user-supplied API key in the sidebar.
+
+We never call the LLM with the operator's key by default — visitor browses
+the project on the operator's dime ONLY if they explicitly enable live mode.
 """
 
 from __future__ import annotations
 
-import json
 import os
 import pickle
 import sys
@@ -17,123 +18,153 @@ from pathlib import Path
 
 import streamlit as st
 
-# Make src importable when run via `streamlit run ui/app.py`
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
-
-from src.rag.climate_lookup import available_regions  # noqa: E402
-from src.schemas.project import (  # noqa: E402
-    CropType,
-    GreenhouseType,
-    ProjectBrief,
-    SiteParameters,
-    SoilType,
-)
 
 st.set_page_config(
     page_title="Agro Greenhouse Designer",
     page_icon=":seedling:",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
+# ─── Header ───────────────────────────────────────────────────────────────────
 st.title("Agro Greenhouse Designer")
 st.caption(
     "Мультиагентная система предпроектной разработки тепличных комплексов. "
     "Валидация по СП 107.13330 «Теплицы и парники»."
 )
+st.markdown(
+    "[Repo на GitHub](https://github.com/JukPelme/agro-greenhouse-designer) · "
+    "Портфолио-проект, иллюстрирующий паттерн "
+    "*LLM-агенты + детерминированные расчёты + RAG по нормативам*."
+)
 
-# --- Sidebar: mode + key
+# ─── Sidebar: режим ───────────────────────────────────────────────────────────
 with st.sidebar:
     st.header("Режим работы")
     mode = st.radio(
         "Источник ответов",
-        ["Демо-режим (бесплатно)", "Свой ANTHROPIC_API_KEY"],
+        [
+            "Готовый прогон — норма (без API-ключа)",
+            "Готовый прогон — отказ (без API-ключа)",
+            "Запустить вживую (нужен свой API-ключ)",
+        ],
         index=0,
     )
-    if mode == "Свой ANTHROPIC_API_KEY":
-        api_key = st.text_input("API key", type="password")
-        if api_key:
-            os.environ["ANTHROPIC_API_KEY"] = api_key
+
+    live_key: str | None = None
+    if mode == "Запустить вживую (нужен свой API-ключ)":
+        live_key = st.text_input("ANTHROPIC_API_KEY", type="password")
+        if live_key:
+            os.environ["ANTHROPIC_API_KEY"] = live_key
 
     st.divider()
     st.markdown(
-        "**О проекте:** портфолио-демо, иллюстрирующее паттерн "
-        "*LLM-агенты + детерминированные расчёты + RAG по нормативам*."
+        "**О проекте:**\n\n"
+        "- 5 агентов LangGraph (Analyst → Designer → Engineer → Validator → Reporter)\n"
+        "- Детерминированные расчёты на чистом Python\n"
+        "- RAG по реальному PDF СП 107.13330\n"
+        "- 4 теста pytest, ~1500 строк кода"
     )
 
-# --- Form: project brief
-st.header("ТЗ на проектирование")
-col1, col2 = st.columns(2)
-with col1:
-    project_name = st.text_input("Название проекта", "Тепличный комплекс «Заря»")
-    greenhouse_type = st.selectbox(
-        "Тип теплицы",
-        [t.value for t in GreenhouseType],
-        index=0,
-    )
-    target_crop = st.selectbox(
-        "Культура",
-        [c.value for c in CropType],
-        index=0,
-    )
-    target_yield_t = st.number_input("Целевая урожайность, т/год", min_value=1.0, value=500.0, step=10.0)
-    budget = st.number_input("Бюджет, млн руб (опц.)", min_value=0.0, value=0.0, step=10.0)
 
-with col2:
-    region = st.selectbox("Регион", available_regions(), index=0)
-    plot_area = st.number_input("Площадь участка, м²", min_value=100, value=20000, step=100)
-    plot_length = st.number_input("Длина участка, м", min_value=10, value=200, step=10)
-    plot_width = st.number_input("Ширина участка, м", min_value=10, value=100, step=10)
-    soil_type = st.selectbox("Грунт", [t.value for t in SoilType], index=1)
+def _load_cached(filename: str):
+    path = ROOT / "demo_cache" / filename
+    if not path.exists():
+        return None
+    with path.open("rb") as fh:
+        return pickle.load(fh)
 
-notes = st.text_area("Дополнительные требования / замечания", "")
 
-run = st.button("Запустить проектирование", type="primary", use_container_width=True)
-
-# --- Run
-if run:
-    brief = ProjectBrief(
-        project_name=project_name,
-        greenhouse_type=GreenhouseType(greenhouse_type),
-        target_crop=CropType(target_crop),
-        target_annual_yield_t=target_yield_t,
-        site=SiteParameters(
-            region=region,
-            plot_area_m2=float(plot_area),
-            plot_length_m=float(plot_length),
-            plot_width_m=float(plot_width),
-            soil_type=SoilType(soil_type),
-        ),
-        budget_rub=budget * 1_000_000 if budget else None,
-        notes=notes,
-    )
-
-    if mode == "Демо-режим (бесплатно)":
-        cache_path = ROOT / "demo_cache" / "default_run.pkl"
-        if not cache_path.exists():
-            st.error(
-                "Демо-кэш не найден. Запустите `python scripts/build_demo_cache.py` "
-                "однократно — это запишет прогон агентов на диск."
-            )
-        else:
-            with cache_path.open("rb") as fh:
-                final_state = pickle.load(fh)
-            st.success("Запуск из кэша. LLM не вызывались.")
-            st.subheader("Итоговый отчёт")
-            st.markdown(final_state.report_markdown)
-            with st.expander("Сырое состояние графа (JSON)"):
-                st.code(final_state.model_dump_json(indent=2, exclude={"messages"}))
+# ─── Демо-режимы: просто проигрываем кэш ──────────────────────────────────────
+if mode == "Готовый прогон — норма (без API-ключа)":
+    st.success("Демо-режим: проигрывается заранее закэшированный прогон.")
+    state = _load_cached("default_run.pkl")
+    if state is None:
+        st.error("Кэш не найден. Запустите `python scripts/build_demo_cache.py`.")
     else:
-        if not os.environ.get("ANTHROPIC_API_KEY"):
-            st.error("Введите ANTHROPIC_API_KEY в сайдбаре.")
-        else:
-            from src.graph import graph
+        st.subheader("Итоговый отчёт")
+        st.markdown(state.report_markdown, unsafe_allow_html=False)
+        with st.expander("State (JSON, без messages)"):
+            st.code(state.model_dump_json(indent=2, exclude={"messages"}))
 
-            with st.spinner("Агенты работают..."):
-                result = graph.invoke({"brief": brief})
-            final_state = result if isinstance(result, dict) else result
-            st.success("Готово.")
-            st.subheader("Итоговый отчёт")
-            st.markdown(final_state.get("report_markdown", "_(пусто)_"))
-            with st.expander("Сырое состояние"):
-                st.code(json.dumps({k: str(v)[:500] for k, v in final_state.items()}, indent=2, ensure_ascii=False))
+elif mode == "Готовый прогон — отказ (без API-ключа)":
+    st.warning(
+        "Демо-режим: ТЗ заведомо противоречиво — система должна указать на это, "
+        "а не выдать правдоподобный-но-ложный результат."
+    )
+    state = _load_cached("failed_run.pkl")
+    if state is None:
+        st.error("Кэш не найден. Запустите `python scripts/build_failed_case.py`.")
+    else:
+        st.subheader("Итоговый отчёт (с замечаниями)")
+        st.markdown(state.report_markdown, unsafe_allow_html=False)
+        with st.expander("Все замечания валидатора"):
+            for issue in state.validation.issues:
+                st.markdown(
+                    f"**{issue.severity.value.upper()} — {issue.rule_id}**\n"
+                    f"{issue.message}\n\n"
+                    f"_Источник:_ {issue.sp_citation or '—'}"
+                )
+
+# ─── Live mode: форма + вызов графа ───────────────────────────────────────────
+else:
+    if not live_key:
+        st.info(
+            "Введите свой ANTHROPIC_API_KEY в сайдбаре. Один прогон графа "
+            "тратит ≈ 5 центов на Opus."
+        )
+        st.stop()
+
+    from src.rag.climate_lookup import available_regions
+    from src.schemas.project import (
+        CropType,
+        GreenhouseType,
+        ProjectBrief,
+        SiteParameters,
+        SoilType,
+    )
+
+    st.header("ТЗ на проектирование")
+    col1, col2 = st.columns(2)
+    with col1:
+        project_name = st.text_input("Название проекта", "Тепличный комплекс «Заря»")
+        gh_type = st.selectbox("Тип теплицы", [t.value for t in GreenhouseType], index=0)
+        crop = st.selectbox("Культура", [c.value for c in CropType], index=0)
+        yield_t = st.number_input("Урожайность, т/год", 1.0, value=500.0, step=10.0)
+
+    with col2:
+        region = st.selectbox("Регион", available_regions(), index=0)
+        plot_area = st.number_input("Площадь участка, м²", 100, value=20000, step=100)
+        plot_len = st.number_input("Длина, м", 10, value=200, step=10)
+        plot_w = st.number_input("Ширина, м", 10, value=100, step=10)
+        soil = st.selectbox("Грунт", [t.value for t in SoilType], index=1)
+
+    if st.button("Запустить проектирование", type="primary", use_container_width=True):
+        brief = ProjectBrief(
+            project_name=project_name,
+            greenhouse_type=GreenhouseType(gh_type),
+            target_crop=CropType(crop),
+            target_annual_yield_t=yield_t,
+            site=SiteParameters(
+                region=region,
+                plot_area_m2=float(plot_area),
+                plot_length_m=float(plot_len),
+                plot_width_m=float(plot_w),
+                soil_type=SoilType(soil),
+            ),
+        )
+
+        from src.graph import graph
+        from src.schemas.state import GraphState
+
+        with st.spinner("Агенты работают (Designer → Engineer → Validator → Reporter)..."):
+            raw = graph.invoke({"brief": brief}, {"recursion_limit": 25})
+            state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
+
+        st.success(f"Готово. Итераций: {state.iteration}.")
+        st.subheader("Итоговый отчёт")
+        st.markdown(state.report_markdown)
+        with st.expander("State"):
+            st.code(state.model_dump_json(indent=2, exclude={"messages"}))
