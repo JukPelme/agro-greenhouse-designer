@@ -4,10 +4,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LangGraph](https://img.shields.io/badge/built%20with-LangGraph-1c5b3a.svg)](https://github.com/langchain-ai/langgraph)
 [![Streamlit](https://img.shields.io/badge/UI-Streamlit-ff4b4b.svg)](https://streamlit.io)
+[![Live Demo](https://img.shields.io/badge/live%20demo-online-2C5F2D.svg)](https://agro-greenhouse-designer-93jbgusctbn6a7xzevt5px.streamlit.app/)
 
 Мультиагентная система предпроектной разработки тепличных комплексов с автоматической проверкой по **СП 107.13330.2012 «Теплицы и парники»** (актуализированная редакция СНиП 2.10.04-85).
 
 Портфолио-проект, иллюстрирующий паттерн **LLM-агенты + детерминированные расчёты + RAG по нормативам**.
+
+🟢 **Live demo:** https://agro-greenhouse-designer-93jbgusctbn6a7xzevt5px.streamlit.app/ — открывается на готовый прогон, в сайдбаре можно переключить на failed-case.
 
 > Это пет-проект, а не сертифицированный инструмент проектирования. Выходные расчёты — предпроектные и требуют верификации специалистом.
 

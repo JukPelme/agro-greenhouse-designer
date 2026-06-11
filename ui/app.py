@@ -19,6 +19,28 @@ from pathlib import Path
 import streamlit as st
 
 ROOT = Path(__file__).parent.parent
+DOCS = ROOT / "docs"
+
+import base64, re
+_IMG_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
+
+def _inline_images(md_text: str) -> str:
+    """Replace relative image paths in markdown with base64 data URIs.
+
+    Streamlit Cloud does not serve local files referenced by relative paths,
+    so we encode each PNG inline so the rendered HTML carries the image data.
+    """
+    def repl(m):
+        alt, src = m.group(1), m.group(2)
+        if src.startswith(("http://", "https://", "data:")):
+            return m.group(0)
+        path = DOCS / src
+        if not path.exists():
+            return m.group(0)
+        b64 = base64.b64encode(path.read_bytes()).decode("ascii")
+        return f"![{alt}](data:image/png;base64,{b64})"
+    return _IMG_RE.sub(repl, md_text)
+
 sys.path.insert(0, str(ROOT))
 
 st.set_page_config(
@@ -85,7 +107,7 @@ if mode == "Готовый прогон — норма (без API-ключа)":
         st.error("Кэш не найден. Запустите `python scripts/build_demo_cache.py`.")
     else:
         st.subheader("Итоговый отчёт")
-        st.markdown(state.report_markdown, unsafe_allow_html=False)
+        st.markdown(_inline_images(state.report_markdown), unsafe_allow_html=True)
         with st.expander("State (JSON, без messages)"):
             st.code(state.model_dump_json(indent=2, exclude={"messages"}))
 
@@ -99,7 +121,7 @@ elif mode == "Готовый прогон — отказ (без API-ключа)
         st.error("Кэш не найден. Запустите `python scripts/build_failed_case.py`.")
     else:
         st.subheader("Итоговый отчёт (с замечаниями)")
-        st.markdown(state.report_markdown, unsafe_allow_html=False)
+        st.markdown(_inline_images(state.report_markdown), unsafe_allow_html=True)
         with st.expander("Все замечания валидатора"):
             for issue in state.validation.issues:
                 st.markdown(
@@ -165,6 +187,6 @@ else:
 
         st.success(f"Готово. Итераций: {state.iteration}.")
         st.subheader("Итоговый отчёт")
-        st.markdown(state.report_markdown)
+        st.markdown(_inline_images(state.report_markdown), unsafe_allow_html=True)
         with st.expander("State"):
             st.code(state.model_dump_json(indent=2, exclude={"messages"}))
