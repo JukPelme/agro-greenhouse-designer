@@ -1,7 +1,7 @@
 """Streamlit demo UI for agro-greenhouse-designer.
 
 Designed to run cleanly on Streamlit Cloud:
-- Demo mode replays a pickled GraphState from demo_cache/  → no LLM cost.
+- Demo mode replays a cached GraphState from demo_cache/*.json — no LLM cost.
 - Failed-case mode replays a refusal scenario for the same reason.
 - Live mode is gated behind a user-supplied API key in the sidebar.
 
@@ -12,7 +12,6 @@ the project on the operator's dime ONLY if they explicitly enable live mode.
 from __future__ import annotations
 
 import os
-import pickle
 import sys
 from pathlib import Path
 
@@ -92,17 +91,30 @@ with st.sidebar:
 
 
 def _load_cached(filename: str):
-    path = ROOT / "demo_cache" / filename
-    if not path.exists():
-        return None
-    with path.open("rb") as fh:
-        return pickle.load(fh)
+    """Load a cached GraphState — JSON preferred, .pkl as legacy fallback.
+
+    JSON is more robust than pickle across schema migrations:
+    extra fields are tolerated, missing ones get defaults, no class refs.
+    """
+    from src.schemas.state import GraphState
+
+    json_path = ROOT / "demo_cache" / filename.replace(".pkl", ".json")
+    if json_path.exists():
+        return GraphState.model_validate_json(json_path.read_text(encoding="utf-8"))
+
+    pkl_path = ROOT / "demo_cache" / filename.replace(".json", ".pkl")
+    if pkl_path.exists():
+        import pickle
+        with pkl_path.open("rb") as fh:
+            return pickle.load(fh)
+
+    return None
 
 
 # ─── Демо-режимы: просто проигрываем кэш ──────────────────────────────────────
 if mode == "Готовый прогон — норма (без API-ключа)":
     st.success("Демо-режим: проигрывается заранее закэшированный прогон.")
-    state = _load_cached("default_run.pkl")
+    state = _load_cached("default_run.json")
     if state is None:
         st.error("Кэш не найден. Запустите `python scripts/build_demo_cache.py`.")
     else:
@@ -116,7 +128,7 @@ elif mode == "Готовый прогон — отказ (без API-ключа)
         "Демо-режим: ТЗ заведомо противоречиво — система должна указать на это, "
         "а не выдать правдоподобный-но-ложный результат."
     )
-    state = _load_cached("failed_run.pkl")
+    state = _load_cached("failed_run.json")
     if state is None:
         st.error("Кэш не найден. Запустите `python scripts/build_failed_case.py`.")
     else:

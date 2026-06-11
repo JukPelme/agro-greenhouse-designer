@@ -8,7 +8,6 @@ Requires ANTHROPIC_API_KEY (or ANTHROPIC_API_KEY_DISCORD) in the env.
 
 from __future__ import annotations
 
-import pickle
 import sys
 from pathlib import Path
 
@@ -48,10 +47,11 @@ def main() -> None:
     # access (state.report_markdown, state.validation.issues, …).
     state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
 
-    out = ROOT / "demo_cache" / "default_run.pkl"
+    out = ROOT / "demo_cache" / "default_run.json"
     out.parent.mkdir(exist_ok=True)
-    with out.open("wb") as fh:
-        pickle.dump(state, fh)
+    # JSON is more robust than pickle across schema migrations:
+    # extra fields are tolerated, missing ones get defaults, no class refs.
+    out.write_text(state.model_dump_json(indent=2, exclude={"messages"}), encoding="utf-8")
 
     # Also persist the rendered report next to docs/ for at-a-glance review.
     (ROOT / "docs" / "example_report.md").write_text(state.report_markdown, encoding="utf-8")

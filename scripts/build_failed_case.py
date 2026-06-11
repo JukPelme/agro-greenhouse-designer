@@ -5,7 +5,6 @@ This is the 'system can say no' demonstration cited in the README.
 
 from __future__ import annotations
 
-import pickle
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -73,10 +72,9 @@ def main() -> None:
         charts=chart_rel,
     )
 
-    out_pkl = ROOT / "demo_cache" / "failed_run.pkl"
-    out_pkl.parent.mkdir(exist_ok=True)
-    with out_pkl.open("wb") as fh:
-        pickle.dump(state, fh)
+    out_json = ROOT / "demo_cache" / "failed_run.json"
+    out_json.parent.mkdir(exist_ok=True)
+    out_json.write_text(state.model_dump_json(indent=2, exclude={"messages"}), encoding="utf-8")
 
     (ROOT / "docs" / "failed_example.md").write_text(state.report_markdown, encoding="utf-8")
 
@@ -91,7 +89,7 @@ def main() -> None:
         print(f"PDF skipped: {exc}")
 
     n_errors = sum(1 for i in state.validation.issues if i.severity.value == "error")
-    print(f"Failed-case state pickled: {out_pkl}")
+    print(f"Failed-case state saved (JSON): {out_json}")
     print(f"Charts: {chart_dir} ({len(chart_files)} files)")
     print(f"Iterations: {state.iteration} / max {state.max_iterations}")
     print(f"Validation: {len(state.validation.issues)} issues ({n_errors} errors)")
