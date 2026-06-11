@@ -88,7 +88,7 @@ def light_balance_chart(state: GraphState, out_dir: Path) -> str:
     values = [li.natural_dli_winter_mol_m2_day, supplemental, li.target_dli_mol_m2_day]
     colors = [_PALETTE["secondary"], _PALETTE["warning"], _PALETTE["primary"]]
 
-    for label, bottom, value, color in zip(labels, bottoms, values, colors):
+    for label, bottom, value, color in zip(labels, bottoms, values, colors, strict=True):
         ax.bar(label, value, bottom=bottom, color=color, width=0.5)
         ax.text(
             label,

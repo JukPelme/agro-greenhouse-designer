@@ -122,8 +122,8 @@ def evaluate_rules(
         / (design.estimated_footprint_m2 or 1)
         * 100
     )
-    setattr(design, "aux_share_pct", aux_share_pct)
-    setattr(design, "min_aisle_width_m", 6.0 if len(design.blocks) > 1 else 0.0)
+    design.aux_share_pct = aux_share_pct
+    design.min_aisle_width_m = 6.0 if len(design.blocks) > 1 else 0.0
 
     for rule in rules:
         if not _applies(rule, ctx):

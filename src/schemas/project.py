@@ -1,7 +1,6 @@
 """Input schemas: project brief (ТЗ) and intermediate domain models."""
 
 from enum import Enum
-from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 

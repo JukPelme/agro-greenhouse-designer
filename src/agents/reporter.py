@@ -15,7 +15,6 @@ from ..render import markdown_to_pdf
 from ..schemas.state import GraphState
 from ..viz import render_all
 
-
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 _TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
 _DOCS_DIR = _PROJECT_ROOT / "docs"

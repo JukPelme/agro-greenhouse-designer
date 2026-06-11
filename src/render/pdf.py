@@ -52,7 +52,10 @@ li { margin: 2px 0; }
 
 img { max-width: 100%; height: auto; display: block; margin: 8px auto; }
 
-code { background: #f4f4f4; padding: 1px 4px; border-radius: 3px; font-family: "DejaVu Sans Mono", monospace; font-size: 9.5pt; }
+code {
+    background: #f4f4f4; padding: 1px 4px; border-radius: 3px;
+    font-family: "DejaVu Sans Mono", monospace; font-size: 9.5pt;
+}
 
 blockquote {
     border-left: 3px solid #97BC62;
