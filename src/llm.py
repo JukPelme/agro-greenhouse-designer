@@ -20,7 +20,8 @@ from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
 
-_DEFAULT_MODEL = "claude-opus-4-7"
+_DEFAULT_MODEL = "claude-sonnet-4-6"  # Sonnet handles structured-output design just fine; Opus only when you want maximum reasoning
+_OPUS_MODEL = "claude-opus-4-7"  # available via get_llm(_OPUS_MODEL)
 _CHEAP_MODEL = "claude-haiku-4-5-20251001"
 
 _KEY_ENV_CANDIDATES = ("ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY_DISCORD")
