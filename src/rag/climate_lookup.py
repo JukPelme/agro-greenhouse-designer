@@ -37,6 +37,7 @@ _REGIONS: dict[str, ClimateData] = {
         solar_radiation_winter_mj_m2_day=1.6,
     ),
     "Ленинградская область": ClimateData(
+        is_northern=False,  # СПб ~60° с.ш., но к зоне «севернее 60°» СП относит области выше Полярного круга
         region="Ленинградская область",
         t_design_winter_c=-24.0,
         t_design_summer_c=20.1,

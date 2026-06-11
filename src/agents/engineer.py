@@ -24,10 +24,12 @@ def engineer_node(state: GraphState) -> dict:
     brief = state.brief
 
     heat_result = heat.compute_heat_balance(design=design, climate=climate, t_indoor_c=18.0)
-    water_result = water.compute_water_demand(design=design, crop=brief.target_crop, climate=climate)
+    water_result = water.compute_water_demand(
+        design=design, crop=brief.target_crop, climate=climate, greenhouse_type=brief.greenhouse_type
+    )
     light_result = lighting.compute_lighting(design=design, crop=brief.target_crop, climate=climate)
     vent_result = ventilation.compute_ventilation(design=design, climate=climate)
-    loads_result = structural.compute_loads(design=design, climate=climate)
+    loads_result = structural.compute_loads(design=design, climate=climate, crop=brief.target_crop)
 
     return {
         "engineering": EngineeringReport(
