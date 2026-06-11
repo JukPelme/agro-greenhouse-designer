@@ -114,6 +114,26 @@ class DesignVariant(BaseModel):
         description="Высота ограждения территории комплекса, м (≥1,6 по п. 4.16)",
     )
 
+    # ── Компоновка блоков на участке ──
+    block_spacing_m: float | None = Field(
+        default=None,
+        description=(
+            "Минимальный разрыв между соседними блоками теплиц, м. Должен быть "
+            "проставлен Designer-ом. Если None — Validator репортит SP107.4.4 "
+            "как INFO 'нет данных', не подставляя фейковое значение."
+        ),
+    )
+
+    # ── Virtual / computed fields populated by rules_engine ──
+    aux_share_pct: float | None = Field(
+        default=None,
+        description="Заполняется rules_engine: доля подсобок от footprint, %. None если footprint=0.",
+    )
+    min_block_spacing_m: float | None = Field(
+        default=None,
+        description="Зеркало block_spacing_m, для удобства правил. None пока Designer не заполнил.",
+    )
+
     @property
     def total_growing_area_m2(self) -> float:
         return sum(b.floor_area_m2 for b in self.blocks)

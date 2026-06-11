@@ -174,39 +174,66 @@ def _block_ctx(ctx: dict[str, Any], block: GreenhouseBlock) -> dict[str, Any]:
 
 def _eval_simple(
     rule: dict, ctx: dict[str, Any]
-) -> ValidationIssue | None:
+) -> tuple[ValidationIssue | None, bool]:
+    """Return (issue, was_checked). was_checked=False means no data was found."""
     check = rule["check"]
 
     if check.get("check_type") == "custom":
         handler = _CUSTOM_CHECKS[check["name"]]
         outcome = handler(ctx["brief"], ctx["design"], ctx["engineering"])
         if outcome is None:
-            return None
+            return None, True
         actual, required = outcome
-        return _issue_from(rule, actual, required)
+        return _issue_from(rule, actual, required), True
 
     values = _resolve_field(check["field"], ctx)
+    if not values:
+        return _no_data_issue(rule), False
     if _check_op(values, check["op"], check["value"]):
-        return None
+        return None, True
     actual = values[0] if len(values) == 1 else values
-    return _issue_from(rule, str(actual), str(check["value"]))
+    return _issue_from(rule, str(actual), str(check["value"])), True
 
 
 def _eval_per_block(
     rule: dict, ctx: dict[str, Any]
-) -> ValidationIssue | None:
+) -> tuple[ValidationIssue | None, bool]:
+    """Iterate every block; collect ALL violators (not just the first) into one issue.
+
+    Returns (issue, was_checked). was_checked=False when applies_when didn't
+    match any block (so no work was done) — keeps the rules-checked counter
+    honest.
+    """
     design: DesignVariant = ctx["design"]
+    check = rule["check"]
+    violations: list[tuple[str, Any]] = []
+    missing_data: list[str] = []
+    applied = False
+
     for block in design.blocks:
         sub_ctx = _block_ctx(ctx, block)
         if not _applies(rule, sub_ctx):
             continue
-        check = rule["check"]
+        applied = True
         values = _resolve_field(check["field"], sub_ctx)
+        if not values:
+            missing_data.append(block.name)
+            continue
         if _check_op(values, check["op"], check["value"]):
             continue
-        actual = values[0] if len(values) == 1 else values
-        return _issue_from(rule, f"{block.name}: {actual}", str(check["value"]))
-    return None
+        violations.append((block.name, values[0] if len(values) == 1 else values))
+
+    if not applied:
+        return None, False
+
+    if violations:
+        desc = "; ".join(f"{name}: {val}" for name, val in violations)
+        return _issue_from(rule, desc, str(check["value"])), True
+
+    if missing_data:
+        return _no_data_issue(rule), False
+
+    return None, True
 
 
 def _issue_from(rule: dict, actual: str, required: str) -> ValidationIssue:
@@ -219,20 +246,45 @@ def _issue_from(rule: dict, actual: str, required: str) -> ValidationIssue:
     )
 
 
+def _no_data_issue(rule: dict) -> ValidationIssue:
+    """INFO-severity issue when a rule's field path resolved to nothing.
+
+    Prevents silent passes on typos in rules.yaml or missing virtual fields.
+    """
+    return ValidationIssue(
+        rule_id=rule["rule_id"],
+        severity=Severity.INFO,
+        message=rule["summary"] + " (не удалось проверить — нет данных)",
+        actual_value=None,
+        required_value=str(rule.get("check", {}).get("value", "")),
+    )
+
+
 # ── virtual computed fields ──────────────────────────────────────────────
 
 
 def _attach_virtual_fields(design: DesignVariant) -> None:
-    """Compute fields that don't live on the schema but rules reference."""
-    footprint = design.estimated_footprint_m2 or 1
-    design.aux_share_pct = sum(z.area_m2 for z in design.aux_zones) / footprint * 100
+    """Populate Optional virtual fields the schema declares.
 
-    # min_block_spacing_m: spacing between two nearest blocks (м). When there's
-    # only a single block, spacing has no meaning — keep as None so rules like
-    # SP107.4.4 don't fire on a one-block layout.
-    design.min_block_spacing_m = 6.0 if len(design.blocks) > 1 else None
-    # Backward-compat alias for the older field name still used in some places.
-    design.min_aisle_width_m = design.min_block_spacing_m
+    Writes:
+        design.aux_share_pct       — % of aux zones from footprint. None when
+                                     footprint is missing/zero (avoids the
+                                     "thousands of percents" bug).
+        design.min_block_spacing_m — pass-through of design.block_spacing_m
+                                     that Designer is expected to fill. We
+                                     NEVER invent a value: if it's missing,
+                                     SP107.4.4 emits a no-data INFO issue
+                                     instead of silently passing.
+    """
+    footprint = design.estimated_footprint_m2
+    if footprint and footprint > 0 and design.aux_zones:
+        design.aux_share_pct = sum(z.area_m2 for z in design.aux_zones) / footprint * 100
+    elif footprint and footprint > 0:
+        design.aux_share_pct = 0.0
+    else:
+        design.aux_share_pct = None
+
+    design.min_block_spacing_m = design.block_spacing_m  # may be None — intentional
 
 
 # ── entry point ──────────────────────────────────────────────────────────
@@ -257,19 +309,15 @@ def evaluate_rules(
     checked = 0
 
     for rule in rules:
-        check = rule.get("check", {})
-        is_custom = check.get("check_type") == "custom"
-        if not _applies(rule, ctx) and not _rule_uses_block_wildcard(rule):
-            continue
-
-        checked += 1
-        if is_custom:
-            issue = _eval_simple(rule, ctx)
-        elif _rule_uses_block_wildcard(rule):
-            issue = _eval_per_block(rule, ctx)
+        if _rule_uses_block_wildcard(rule):
+            issue, was_checked = _eval_per_block(rule, ctx)
         else:
-            issue = _eval_simple(rule, ctx)
+            if not _applies(rule, ctx):
+                continue
+            issue, was_checked = _eval_simple(rule, ctx)
 
+        if was_checked or issue is not None:
+            checked += 1
         if issue:
             issues.append(issue)
 

@@ -75,8 +75,13 @@ def test_film_with_opaque_share_too_high_triggers_sp511_and_eng3():
     assert checked > 0
 
 
-def test_year_round_passes_when_aisle_and_transmittance_ok():
-    """Sanity: a sensible year-round design with two glass blocks should NOT trip 4.4 or 5.11."""
+def test_year_round_passes_when_all_required_fields_filled():
+    """A sensible year-round design with required fields filled should NOT trip 4.4 or 5.11.
+
+    `block_spacing_m`, `glass_thickness_mm`, aux_zones are all explicitly set so the
+    new no-data INFO logic doesn't fire either.
+    """
+    from src.schemas.design import LayoutZone
     climate = lookup_climate("Краснодарский край")
     brief = _brief()
     design = DesignVariant(
@@ -85,33 +90,28 @@ def test_year_round_passes_when_aisle_and_transmittance_ok():
         blocks=[
             GreenhouseBlock(
                 name="Блок 1",
-                length_m=96,
-                width_m=12,
-                ridge_height_m=6.0,
-                eave_height_m=5.0,
-                covering=CoveringMaterial.GLASS,
-                light_transmittance=0.88,
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+                glass_thickness_mm=4.0,
             ),
             GreenhouseBlock(
                 name="Блок 2",
-                length_m=96,
-                width_m=12,
-                ridge_height_m=6.0,
-                eave_height_m=5.0,
-                covering=CoveringMaterial.GLASS,
-                light_transmittance=0.88,
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+                glass_thickness_mm=4.0,
             ),
         ],
-        # Enough aux to satisfy ENG.2-aux-share (≥5%)
-        aux_zones=[],
+        aux_zones=[LayoutZone(name="Aux", area_m2=300.0, purpose="ops")],
         estimated_footprint_m2=2500,
+        block_spacing_m=6.0,  # passes SP107.4.4
     )
     eng = _engineer(design, climate, CropType.TOMATO)
-    issues, _ = evaluate_rules(brief, design, eng)
-    rule_ids = {i.rule_id for i in issues}
-    assert "SP107.4.4-year-round" not in rule_ids  # min_aisle defaults to 6.0 with >=2 blocks
-    assert "SP107.5.11-glass" not in rule_ids  # tau=0.88 >= 0.85
-    assert "ENG.3-light-min" not in rule_ids  # tau=0.88 >= 0.60
+    issues, _ = evaluate_rules(brief, design, eng, climate=climate)
+    real = [i for i in issues if "не удалось" not in i.message.lower()]
+    rule_ids = {i.rule_id for i in real}
+    assert "SP107.4.4-year-round" not in rule_ids
+    assert "SP107.5.11-glass" not in rule_ids
+    assert "ENG.3-light-min" not in rule_ids
 
 
 
@@ -269,3 +269,105 @@ def test_aux_share_between_5_and_30_passes():
     eng = _engineer(design, climate, CropType.TOMATO)
     issues, _ = evaluate_rules(brief, design, eng, climate=climate)
     assert "ENG.2-aux-share" not in {i.rule_id for i in issues}
+
+
+
+def test_block_spacing_missing_emits_info_not_silent_pass():
+    """When Designer leaves block_spacing_m=None on a multi-block layout,
+    SP107.4.4 must NOT silently pass — it should fire as INFO 'no data'."""
+    climate = lookup_climate("Краснодарский край")
+    brief = _brief()
+    design = DesignVariant(
+        variant_id="multi-block-no-spacing",
+        rationale="forgot to fill spacing",
+        blocks=[
+            GreenhouseBlock(
+                name="Блок 1",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+            ),
+            GreenhouseBlock(
+                name="Блок 2",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+            ),
+        ],
+        estimated_footprint_m2=2500,
+        block_spacing_m=None,  # missing — must NOT silently pass
+    )
+    eng = _engineer(design, climate, CropType.TOMATO)
+    issues, _ = evaluate_rules(brief, design, eng, climate=climate)
+    sp_44 = [i for i in issues if i.rule_id == "SP107.4.4-year-round"]
+    assert sp_44, "SP107.4.4 must fire even with missing data, not silently pass"
+    assert sp_44[0].severity.value == "info"
+    assert "не удалось" in sp_44[0].message.lower()
+
+
+def test_block_spacing_below_6m_triggers_real_error():
+    """Designer fills block_spacing_m=4 m → SP107.4.4 fires as ERROR with real value."""
+    climate = lookup_climate("Краснодарский край")
+    brief = _brief()
+    design = DesignVariant(
+        variant_id="tight-spacing",
+        rationale="too close",
+        blocks=[
+            GreenhouseBlock(
+                name="Блок 1",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+            ),
+            GreenhouseBlock(
+                name="Блок 2",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+            ),
+        ],
+        estimated_footprint_m2=2500,
+        block_spacing_m=4.0,  # below the 6 m cap from п. 4.4
+    )
+    eng = _engineer(design, climate, CropType.TOMATO)
+    issues, _ = evaluate_rules(brief, design, eng, climate=climate)
+    sp_44 = [i for i in issues if i.rule_id == "SP107.4.4-year-round"]
+    assert sp_44, "SP107.4.4 must fire when spacing is too small"
+    assert sp_44[0].severity.value == "error"
+    assert "4.0" in str(sp_44[0].actual_value)
+
+
+def test_every_rule_resolves_its_field_on_a_complete_design():
+    """Coverage guard: build a complete design and assert NO rule emits 'no data'.
+
+    This catches typos in rules.yaml field paths — without this test a misspelled
+    path would silently make the rule unfireable.
+    """
+    from src.schemas.design import GreenhouseLayoutType, LayoutZone, RoofShape
+    climate = lookup_climate("Краснодарский край")
+    brief = _brief()
+    design = DesignVariant(
+        variant_id="complete",
+        rationale="fully filled",
+        blocks=[
+            GreenhouseBlock(
+                name="Блок 1",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+                layout=GreenhouseLayoutType.BLOCK, span_width_m=9.0, span_count=2,
+                roof_shape=RoofShape.STRAIGHT, roof_slope_pct=45.0,
+                glass_thickness_mm=4.0, opaque_share_pct=10.0,
+            ),
+            GreenhouseBlock(
+                name="Блок 2",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+                layout=GreenhouseLayoutType.BLOCK, span_width_m=9.0, span_count=2,
+                roof_shape=RoofShape.STRAIGHT, roof_slope_pct=45.0,
+                glass_thickness_mm=4.0, opaque_share_pct=10.0,
+            ),
+        ],
+        aux_zones=[LayoutZone(name="Aux", area_m2=400.0, purpose="ops")],
+        estimated_footprint_m2=3000,
+        block_spacing_m=6.0,
+    )
+    eng = _engineer(design, climate, CropType.TOMATO)
+    issues, _ = evaluate_rules(brief, design, eng, climate=climate)
+    no_data = [i for i in issues if "не удалось проверить" in i.message.lower()]
+    assert not no_data, f"These rules can not resolve their field: {[i.rule_id for i in no_data]}"
