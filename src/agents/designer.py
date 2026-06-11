@@ -10,7 +10,6 @@ from __future__ import annotations
 from ..schemas.design import DesignVariant
 from ..schemas.state import GraphState
 
-
 SYSTEM_PROMPT = """Ты — главный архитектор тепличных комплексов в проектной организации.
 
 На входе ТЗ, климат региона, замечания аналитика и (опционально) замечания

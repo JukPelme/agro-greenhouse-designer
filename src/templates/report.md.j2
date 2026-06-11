@@ -36,8 +36,21 @@
 ### Блоки теплиц
 
 {% for b in state.design.blocks %}
-- **{{ b.name }}** — {{ b.length_m }} × {{ b.width_m }} м (площадь {{ "%.0f" | format(b.floor_area_m2) }} м²), высота {{ b.eave_height_m }}/{{ b.ridge_height_m }} м, {{ b.covering.value }} (τ={{ b.light_transmittance }})
+- **{{ b.name }}** — {{ b.length_m }} × {{ b.width_m }} м (площадь {{ "%.0f" | format(b.floor_area_m2) }} м²)
+  - Высоты: водосток {{ b.eave_height_m }} м, конёк {{ b.ridge_height_m }} м
+  - Компоновка: {{ b.layout.value }}, {{ b.span_count }} пролётов по {{ b.span_width_m }} м
+  - Кровля: {{ b.roof_shape.value }}, уклон {{ b.roof_slope_pct }}%
+  - Ограждение: {{ b.covering.value }} (τ={{ b.light_transmittance }}){% if b.glass_thickness_mm %}, стекло {{ b.glass_thickness_mm }} мм{% endif %}
+  - Доля светонепроницаемых конструкций: {{ b.opaque_share_pct }}%
 {% endfor %}
+
+### Конструктивные параметры комплекса
+
+| Параметр | Значение | Пункт СП |
+| --- | --- | --- |
+| Высота цоколя | {{ state.design.plinth_height_m }} м | п. 5.8 |
+| Превышение фундамента над почвой | {{ state.design.foundation_above_soil_m }} м | п. 5.9 |
+| Высота ограждения территории | {{ state.design.fence_height_m }} м | п. 4.16 |
 
 ### Подсобные зоны
 
@@ -66,6 +79,8 @@ _Не предложены._
 - Инфильтрационные теплопотери: **{{ state.engineering.heat.infiltration_loss_kw }} кВт**
 - **Пиковая тепловая нагрузка: {{ state.engineering.heat.total_peak_load_kw }} кВт**
 - Годовая потребность в тепле: **{{ state.engineering.heat.annual_heat_demand_mwh }} МВт·ч**
+- Температура теплоносителя: **{{ state.engineering.heat.supply_temp_c }} °C** _(п. 7.9 ≤150)_
+- Доля теплоты в нижнюю зону: **{{ state.engineering.heat.share_to_lower_zone_pct }}%** _(п. 7.13 ≥40)_
 
 ### 3.2. Водоснабжение
 
@@ -77,6 +92,8 @@ _Не предложены._
 - Пиковый часовой расход: **{{ state.engineering.water.peak_hourly_m3 }} м³/ч**
 - Годовой расход: **{{ "%.0f" | format(state.engineering.water.annual_demand_m3) }} м³/год**
 - Способ полива: {{ state.engineering.water.irrigation_method }}
+- Категория надёжности: **{% if state.engineering.water.reliability_category == 1 %}I{% elif state.engineering.water.reliability_category == 2 %}II{% else %}III{% endif %}** _(п. 6.14)_
+- Радиус зоны крана: **{{ state.engineering.water.hose_service_radius_m }} м** _(п. 6.8 ≤45)_
 
 ### 3.3. Освещённость и досветка
 
@@ -91,6 +108,7 @@ _Не предложены._
 {% else %}
 - Досветка не требуется.
 {% endif %}
+- Освещённость пола в проездах: {{ state.engineering.light.aisle_floor_illuminance_lx }} лк _(п. 8.3 ≤10)_
 
 ### 3.4. Годовое энергопотребление
 
@@ -101,16 +119,20 @@ _Не предложены._
 ### 3.5. Вентиляция
 
 - Целевая кратность воздухообмена летом: **{{ state.engineering.ventilation.summer_air_changes_per_hour }} ч⁻¹**
-- Площадь открываемых проёмов: **{{ state.engineering.ventilation.required_vent_opening_pct_of_floor }}% площади пола**
+- Площадь проёмов от площади ограждения: **{{ state.engineering.ventilation.opening_share_of_envelope_pct }}%** _(п. 7.18 ≥20, ≥10 севернее 60°)_
+- Площадь проёмов от площади пола: {{ state.engineering.ventilation.required_vent_opening_pct_of_floor }}%
 - Принудительная вентиляция: **{{ "требуется" if state.engineering.ventilation.forced_vent_required else "не требуется" }}**
 
 ### 3.6. Нагрузки
 
-- Снеговая нагрузка на покрытие: **{{ state.engineering.loads.snow_load_total_kn }} кН**
-- Ветровая нагрузка на стены: **{{ state.engineering.loads.wind_load_total_kn }} кН**
+- Снеговая нагрузка на покрытие: **{{ state.engineering.loads.snow_load_total_kn }} кН** (γ={{ state.engineering.loads.snow_overload_factor }})
+- Ветровая нагрузка на стены: **{{ state.engineering.loads.wind_load_total_kn }} кН** (q₁₀={{ state.engineering.loads.wind_q10_factor }}, q₂={{ state.engineering.loads.wind_q2_factor }})
+- Шпалерная нагрузка: {{ state.engineering.loads.trellis_load_n_per_m2 }} Н/м² (γ={{ state.engineering.loads.trellis_overload_factor }})
 {% if state.engineering.loads.notes %}
 - {{ state.engineering.loads.notes }}
 {% endif %}
+
+_Коэффициенты перегрузки и нормативные значения — СП 107.13330 п. 5.14._
 
 ---
 

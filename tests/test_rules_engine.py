@@ -46,13 +46,13 @@ def _brief(crop=CropType.TOMATO, kind=GreenhouseType.YEAR_ROUND):
     )
 
 
-def test_low_light_polyethylene_triggers_engineering_and_sp_511():
-    """tau=0.50 on polyethylene violates ENG.3 (<0.60) AND SP107.5.11-film (<0.90)."""
+def test_film_with_opaque_share_too_high_triggers_sp511_and_eng3():
+    """τ=0.50 violates ENG.3 (<0.60); opaque_share_pct=15 violates SP107.5.11-film (>10%)."""
     climate = lookup_climate("Краснодарский край")
     brief = _brief()
     design = DesignVariant(
         variant_id="bad",
-        rationale="cheap film",
+        rationale="cheap film + lots of opaque",
         blocks=[
             GreenhouseBlock(
                 name="Блок 1",
@@ -62,6 +62,7 @@ def test_low_light_polyethylene_triggers_engineering_and_sp_511():
                 eave_height_m=5.0,
                 covering=CoveringMaterial.POLYETHYLENE,
                 light_transmittance=0.50,
+                opaque_share_pct=15.0,
             ),
         ],
         estimated_footprint_m2=1500,
@@ -111,3 +112,81 @@ def test_year_round_passes_when_aisle_and_transmittance_ok():
     assert "SP107.4.4-year-round" not in rule_ids  # min_aisle defaults to 6.0 with >=2 blocks
     assert "SP107.5.11-glass" not in rule_ids  # tau=0.88 >= 0.85
     assert "ENG.3-light-min" not in rule_ids  # tau=0.88 >= 0.60
+
+
+
+def test_block_span_violates_5_5_for_multi_span():
+    """Multi-span block with span_width=12 m violates SP107.5.5-span-block (cap 9 m)."""
+    climate = lookup_climate("Краснодарский край")
+    brief = _brief()
+    from src.schemas.design import GreenhouseLayoutType
+    design = DesignVariant(
+        variant_id="wide-span",
+        rationale="too-wide multi-span",
+        blocks=[
+            GreenhouseBlock(
+                name="Блок 1",
+                length_m=96, width_m=24, ridge_height_m=6.5, eave_height_m=5.5,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+                layout=GreenhouseLayoutType.BLOCK,
+                span_width_m=12.0,  # > 9 cap
+                span_count=2,
+            ),
+            GreenhouseBlock(
+                name="Блок 2",
+                length_m=96, width_m=24, ridge_height_m=6.5, eave_height_m=5.5,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+                layout=GreenhouseLayoutType.BLOCK,
+                span_width_m=12.0,
+                span_count=2,
+            ),
+        ],
+        estimated_footprint_m2=5000,
+    )
+    eng = _engineer(design, climate, CropType.TOMATO)
+    issues, _ = evaluate_rules(brief, design, eng)
+    assert "SP107.5.5-span-block" in {i.rule_id for i in issues}
+
+
+def test_low_plinth_triggers_5_8():
+    """plinth_height_m=0.2 violates SP107.5.8 (≥ 0.3)."""
+    climate = lookup_climate("Краснодарский край")
+    brief = _brief()
+    design = DesignVariant(
+        variant_id="low-plinth",
+        rationale="shallow plinth",
+        blocks=[
+            GreenhouseBlock(
+                name="Блок 1",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+            ),
+        ],
+        estimated_footprint_m2=1500,
+        plinth_height_m=0.2,
+    )
+    eng = _engineer(design, climate, CropType.TOMATO)
+    issues, _ = evaluate_rules(brief, design, eng)
+    assert "SP107.5.8" in {i.rule_id for i in issues}
+
+
+def test_glass_thickness_too_thick_triggers_5_23():
+    """glass_thickness_mm=6 violates SP107.5.23 (≤4)."""
+    climate = lookup_climate("Краснодарский край")
+    brief = _brief()
+    design = DesignVariant(
+        variant_id="thick-glass",
+        rationale="too thick",
+        blocks=[
+            GreenhouseBlock(
+                name="Блок 1",
+                length_m=96, width_m=12, ridge_height_m=6.0, eave_height_m=5.0,
+                covering=CoveringMaterial.GLASS, light_transmittance=0.88,
+                glass_thickness_mm=6.0,
+            ),
+        ],
+        estimated_footprint_m2=1500,
+    )
+    eng = _engineer(design, climate, CropType.TOMATO)
+    issues, _ = evaluate_rules(brief, design, eng)
+    assert "SP107.5.23" in {i.rule_id for i in issues}
