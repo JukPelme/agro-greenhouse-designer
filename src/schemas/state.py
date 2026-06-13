@@ -21,6 +21,7 @@ class GraphState(BaseModel):
 
     # Input
     brief: ProjectBrief
+    lang: str = Field(default="ru", description="Language for the rendered report: 'ru' or 'en'")
 
     # Resolved context (Analyst)
     climate: ClimateData | None = None

@@ -1,0 +1,162 @@
+# Pre-design solution: {{ state.brief.project_name }}
+
+**Region:** {{ state.brief.site.region }}
+**Greenhouse type:** {{ state.brief.greenhouse_type.value }}
+**Crop:** {{ state.brief.target_crop.value }}
+**Target yield:** {{ state.brief.target_annual_yield_t }} t/year
+**Generated:** {{ generated_at }}
+
+---
+
+## 1. Site inputs and analysis
+
+{{ state.analyst_notes }}
+
+**Climate parameters (per Russian SP 131.13330):**
+
+| Parameter | Value |
+| --- | --- |
+| Design winter temperature (t5) | {{ state.climate.t_design_winter_c }} °C |
+| Design summer temperature | {{ state.climate.t_design_summer_c }} °C |
+| Heating degree-days | {{ state.climate.heating_degree_days }} |
+| Heating period | {{ state.climate.heating_period_days }} days |
+| Snow load | {{ state.climate.snow_load_kpa }} kPa |
+| Wind load | {{ state.climate.wind_load_kpa }} kPa |
+| Solar radiation (winter) | {{ state.climate.solar_radiation_winter_mj_m2_day }} MJ/m²/day |
+
+---
+
+## 2. Design solution (variant {{ state.design.variant_id }})
+
+**Rationale:** {{ state.design.rationale }}
+
+**Total growing area:** {{ "%.0f" | format(state.design.total_growing_area_m2) }} m²
+**Complex footprint (with auxiliary):** {{ state.design.estimated_footprint_m2 }} m²
+
+### Greenhouse blocks
+
+{% for b in state.design.blocks %}
+- **{{ b.name }}** — {{ b.length_m }} × {{ b.width_m }} m (area {{ "%.0f" | format(b.floor_area_m2) }} m²)
+  - Heights: eave {{ b.eave_height_m }} m, ridge {{ b.ridge_height_m }} m
+  - Layout: {{ b.layout.value }}, {{ b.span_count }} spans of {{ b.span_width_m }} m
+  - Roof: {{ b.roof_shape.value }}, slope {{ b.roof_slope_pct }}%
+  - Covering: {{ b.covering.value }} (τ={{ b.light_transmittance }}){% if b.glass_thickness_mm %}, glass {{ b.glass_thickness_mm }} mm{% endif %}
+  - Opaque structures share: {{ b.opaque_share_pct }}%
+{% endfor %}
+
+### Complex structural parameters
+
+| Parameter | Value | SP Clause |
+| --- | --- | --- |
+| Plinth height | {{ state.design.plinth_height_m }} m | 5.8 |
+| Foundation rise above soil | {{ state.design.foundation_above_soil_m }} m | 5.9 |
+| Territory fence height | {{ state.design.fence_height_m }} m | 4.16 |
+
+### Auxiliary zones
+
+{% if state.design.aux_zones %}
+{% for z in state.design.aux_zones %}
+- **{{ z.name }}** — {{ z.area_m2 }} m² ({{ z.purpose }})
+{% endfor %}
+{% else %}
+_Not proposed._
+{% endif %}
+
+---
+
+## 3. Engineering calculations
+
+### 3.1. Heat supply
+
+{% if charts.energy_balance %}
+![Heat losses and peak load]({{ charts.energy_balance }})
+{% endif %}
+
+- Design temperature difference: **{{ state.engineering.heat.design_temp_diff_c }} °C**
+- Envelope area: **{{ state.engineering.heat.envelope_area_m2 }} m²**
+- Overall heat transfer coefficient U: **{{ state.engineering.heat.overall_heat_transfer_coef_w_m2k }} W/(m²·K)**
+- Transmission losses: **{{ state.engineering.heat.transmission_loss_kw }} kW**
+- Infiltration losses: **{{ state.engineering.heat.infiltration_loss_kw }} kW**
+- **Peak heating load: {{ state.engineering.heat.total_peak_load_kw }} kW**
+- Annual heat demand: **{{ state.engineering.heat.annual_heat_demand_mwh }} MWh**
+- Coolant temperature: **{{ state.engineering.heat.supply_temp_c }} °C** _(SP 7.9 ≤150)_
+- Lower-zone heat share: **{{ state.engineering.heat.share_to_lower_zone_pct }}%** _(SP 7.13 ≥40)_
+
+### 3.2. Water supply
+
+{% if charts.water_demand %}
+![Water demand]({{ charts.water_demand }})
+{% endif %}
+
+- Daily demand: **{{ state.engineering.water.daily_demand_m3 }} m³/day**
+- Peak hourly: **{{ state.engineering.water.peak_hourly_m3 }} m³/h**
+- Annual: **{{ "%.0f" | format(state.engineering.water.annual_demand_m3) }} m³/year**
+- Irrigation method: {{ state.engineering.water.irrigation_method }}
+- Reliability category: **{% if state.engineering.water.reliability_category == 1 %}I{% elif state.engineering.water.reliability_category == 2 %}II{% else %}III{% endif %}** _(SP 6.14)_
+- Hose service radius: **{{ state.engineering.water.hose_service_radius_m }} m** _(SP 6.8 ≤45)_
+
+### 3.3. Lighting and supplemental
+
+{% if charts.light_balance %}
+![Light balance]({{ charts.light_balance }})
+{% endif %}
+
+- Target DLI: **{{ state.engineering.light.target_dli_mol_m2_day }} mol/m²/day**
+- Natural winter DLI: **{{ state.engineering.light.natural_dli_winter_mol_m2_day }} mol/m²/day**
+{% if state.engineering.light.supplemental_required %}
+- **Supplemental lighting required**: installed {{ state.engineering.light.installed_lamp_power_w_m2 }} W/m², consumption {{ "%.0f" | format(state.engineering.light.supplemental_kwh_year) }} kWh/year
+{% else %}
+- Supplemental lighting not required.
+{% endif %}
+- Aisle floor illuminance: {{ state.engineering.light.aisle_floor_illuminance_lx }} lx _(SP 8.3 ≤10)_
+
+### 3.4. Annual energy consumption
+
+{% if charts.annual_energy %}
+![Annual energy breakdown]({{ charts.annual_energy }})
+{% endif %}
+
+### 3.5. Ventilation
+
+- Summer target air changes per hour: **{{ state.engineering.ventilation.summer_air_changes_per_hour }} h⁻¹**
+- Vent opening share of envelope: **{{ state.engineering.ventilation.opening_share_of_envelope_pct }}%** _(SP 7.18 ≥20, ≥10 north of 60°N)_
+- Vent opening share of floor: {{ state.engineering.ventilation.required_vent_opening_pct_of_floor }}%
+- Forced ventilation: **{{ "required" if state.engineering.ventilation.forced_vent_required else "not required" }}**
+
+### 3.6. Structural loads
+
+- Snow load on roof: **{{ state.engineering.loads.snow_load_total_kn }} kN** (γ={{ state.engineering.loads.snow_overload_factor }})
+- Wind load on walls: **{{ state.engineering.loads.wind_load_total_kn }} kN** (q₁₀={{ state.engineering.loads.wind_q10_factor }}, q₂={{ state.engineering.loads.wind_q2_factor }})
+- Trellis load: {{ state.engineering.loads.trellis_load_n_per_m2 }} N/m² (γ={{ state.engineering.loads.trellis_overload_factor }})
+{% if state.engineering.loads.notes %}
+- {{ state.engineering.loads.notes }}
+{% endif %}
+
+_Overload factors and normative values per SP 107.13330 clause 5.14._
+
+---
+
+## 4. SP 107.13330 compliance check
+
+Rules checked: **{{ state.validation.rules_checked }}**
+
+{% if state.validation.issues %}
+{% for issue in state.validation.issues %}
+### {{ issue.severity.value | upper }} — {{ issue.rule_id }}
+
+{{ issue.message }}
+
+- Actual: `{{ issue.actual_value }}`
+- Required: `{{ issue.required_value }}`
+{% if issue.sp_citation %}
+- **Source** _(SP 107.13330, original Russian text)_: {{ issue.sp_citation }}
+{% endif %}
+
+{% endfor %}
+{% else %}
+✓ All checked SP 107.13330 requirements satisfied.
+{% endif %}
+
+---
+
+_Generated by agro-greenhouse-designer. Outputs are pre-design estimates and require validation by a qualified engineer before detailed documentation._

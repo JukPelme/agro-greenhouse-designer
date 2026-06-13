@@ -1,0 +1,137 @@
+# Pre-design solution: Тестовый отказ системы
+
+**Region:** Новосибирская область
+**Greenhouse type:** year_round
+**Crop:** tomato
+**Target yield:** 2000.0 t/year
+**Generated:** 2026-06-13 01:25
+
+---
+
+## 1. Site inputs and analysis
+
+Целевая урожайность относительно участка: 4000.0 кг/м²/год
+⚠ Целевая урожайность очень высокая — потребуется интенсивная технология.
+
+**Climate parameters (per Russian SP 131.13330):**
+
+| Parameter | Value |
+| --- | --- |
+| Design winter temperature (t5) | -37.0 °C |
+| Design summer temperature | 25.0 °C |
+| Heating degree-days | 6076.0 |
+| Heating period | 227 days |
+| Snow load | 2.4 kPa |
+| Wind load | 0.3 kPa |
+| Solar radiation (winter) | 1.5 MJ/m²/day |
+
+---
+
+## 2. Design solution (variant failed_v1)
+
+**Rationale:** Участок крайне мал (всего 500 м²) при целевой урожайности в 2 000 т/год — физическое противоречие, которое невозможно устранить компоновочными решениями. Тем не менее, в соответствии с ТЗ, проектируются два отдельных блока для разделения культур (томат и сопутствующая рассада). Выбран круглогодичный блочный тип с остеклением: стекло обеспечивает максимальное светопропускание, критичное в условиях жёстких зим Новосибирской области с низкой инсоляцией. Оба блока размещены вдоль длинной оси участка с сохранением нормативного разрыва. Для культуры томата с подвязкой обеспечена высота конька не менее нормативных 5,5 м. Вспомогательные зоны (техпомещение и тамбур-шлюз) сформированы в объёме не менее 5% от площади, что закрывает замечание ENG.2; достижение целевой урожайности 2 000 т на участке 500 м² физически невозможно, однако площадь выращивания максимально увеличена в рамках доступного пятна застройки для минимизации дефицита по ENG.5.
+
+**Total growing area:** 144 m²
+**Complex footprint (with auxiliary):** 144.0 m²
+
+### Greenhouse blocks
+
+- **Блок А — томат основной** — 12.0 × 9.0 m (area 108 m²)
+  - Heights: eave 4.0 m, ridge 5.5 m
+  - Layout: block, 1 spans of 9.0 m
+  - Roof: straight, slope 45.0%
+  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 14.0%
+- **Блок Б — рассадное отделение** — 6.0 × 6.0 m (area 36 m²)
+  - Heights: eave 4.0 m, ridge 5.5 m
+  - Layout: block, 1 spans of 6.0 m
+  - Roof: straight, slope 45.0%
+  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 14.0%
+
+### Complex structural parameters
+
+| Parameter | Value | SP Clause |
+| --- | --- | --- |
+| Plinth height | 0.4 m | 5.8 |
+| Foundation rise above soil | 0.4 m | 5.9 |
+| Territory fence height | 1.8 m | 4.16 |
+
+### Auxiliary zones
+
+- **Техническое помещение** — 9.0 m² (Размещение инженерного оборудования (отопление, вентиляция, автоматика))
+- **Тамбур-шлюз** — 4.0 m² (Санитарный шлюз между улицей и производственной зоной)
+
+---
+
+## 3. Engineering calculations
+
+### 3.1. Heat supply
+
+![Heat losses and peak load](charts/failed_v1/energy_balance.png)
+
+- Design temperature difference: **55.0 °C**
+- Envelope area: **429.6 m²**
+- Overall heat transfer coefficient U: **6.4 W/(m²·K)**
+- Transmission losses: **151.2 kW**
+- Infiltration losses: **30.2 kW**
+- **Peak heating load: 181.5 kW**
+- Annual heat demand: **481.1 MWh**
+- Coolant temperature: **95.0 °C** _(SP 7.9 ≤150)_
+- Lower-zone heat share: **45.0%** _(SP 7.13 ≥40)_
+
+### 3.2. Water supply
+
+![Water demand](charts/failed_v1/water_demand.png)
+
+- Daily demand: **0.65 m³/day**
+- Peak hourly: **0.08 m³/h**
+- Annual: **194 m³/year**
+- Irrigation method: Капельное (по умолчанию)
+- Reliability category: **II** _(SP 6.14)_
+- Hose service radius: **40.0 m** _(SP 6.8 ≤45)_
+
+### 3.3. Lighting and supplemental
+
+![Light balance](charts/failed_v1/light_balance.png)
+
+- Target DLI: **22.0 mol/m²/day**
+- Natural winter DLI: **2.6 mol/m²/day**
+- **Supplemental lighting required**: installed 266.2 W/m², consumption 139225 kWh/year
+- Aisle floor illuminance: 8.0 lx _(SP 8.3 ≤10)_
+
+### 3.4. Annual energy consumption
+
+![Annual energy breakdown](charts/failed_v1/annual_energy.png)
+
+### 3.5. Ventilation
+
+- Summer target air changes per hour: **60.0 h⁻¹**
+- Vent opening share of envelope: **20.0%** _(SP 7.18 ≥20, ≥10 north of 60°N)_
+- Vent opening share of floor: 59.7%
+- Forced ventilation: **not required**
+
+### 3.6. Structural loads
+
+- Snow load on roof: **556.0 kN** (γ=1.4)
+- Wind load on walls: **63.0 kN** (q₁₀=1.0, q₂=0.6)
+- Trellis load: 150.0 N/m² (γ=1.3)
+
+_Overload factors and normative values per SP 107.13330 clause 5.14._
+
+---
+
+## 4. SP 107.13330 compliance check
+
+Rules checked: **33**
+
+### ERROR — ENG.5-yield-feasibility
+
+Площадь выращивания × норма культуры должна покрывать минимум 90% целевой урожайности из ТЗ. Иначе участок физически не вмещает заявленный объём продукции.
+
+- Actual: `вмещает ~7 т/год (tomato @ 50.0 кг/м² × 144 м²)`
+- Required: `>= 1800 т/год (90% от ТЗ 2000.0 т)`
+- **Source** _(SP 107.13330, original Russian text)_: Инженерная проверка (не из СП): достижимость целевой урожайности
+
+
+---
+
+_Generated by agro-greenhouse-designer. Outputs are pre-design estimates and require validation by a qualified engineer before detailed documentation._

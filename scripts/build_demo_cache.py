@@ -42,22 +42,34 @@ def main() -> None:
     )
 
     raw = graph.invoke({"brief": brief}, {"recursion_limit": 25})
-
-    # LangGraph returns a dict; rebuild GraphState so the UI can use attribute
-    # access (state.report_markdown, state.validation.issues, …).
     state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
 
-    out = ROOT / "demo_cache" / "default_run.json"
-    out.parent.mkdir(exist_ok=True)
-    # JSON is more robust than pickle across schema migrations:
-    # extra fields are tolerated, missing ones get defaults, no class refs.
-    out.write_text(state.model_dump_json(indent=2, exclude={"messages"}), encoding="utf-8")
+    # Render both languages — Reporter is deterministic (no LLM), so we just
+    # re-invoke it with state.lang swapped instead of re-running the graph.
+    from src.agents.reporter import reporter_node
 
-    # Also persist the rendered report next to docs/ for at-a-glance review.
-    (ROOT / "docs" / "example_report.md").write_text(state.report_markdown, encoding="utf-8")
+    out_dir = ROOT / "demo_cache"
+    out_dir.mkdir(exist_ok=True)
+    docs_dir = ROOT / "docs"
 
-    print(f"Cached final state to {out} ({out.stat().st_size} bytes)")
-    print(f"Rendered report to docs/example_report.md ({len(state.report_markdown)} chars)")
+    for lang in ("ru", "en"):
+        state.lang = lang
+        result = reporter_node(state)
+        state.report_markdown = result["report_markdown"]
+        state.report_pdf_path = result.get("report_pdf_path")
+
+        json_out = out_dir / f"default_run.{lang}.json"
+        json_out.write_text(state.model_dump_json(indent=2, exclude={"messages"}), encoding="utf-8")
+
+        md_out = docs_dir / f"example_report.{lang}.md"
+        md_out.write_text(state.report_markdown, encoding="utf-8")
+        print(f"  {lang}: {json_out.name} ({json_out.stat().st_size} B), report {len(state.report_markdown)} chars")
+
+    # Keep `default_run.json` as a back-compat alias for the Russian version.
+    (out_dir / "default_run.json").write_text(
+        (out_dir / "default_run.ru.json").read_text(encoding="utf-8"), encoding="utf-8"
+    )
+
     print(f"Validation issues: {len(state.validation.issues)}, iterations: {state.iteration}")
 
 

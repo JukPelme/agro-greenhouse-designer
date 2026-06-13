@@ -42,7 +42,13 @@ def reporter_node(state: GraphState) -> dict:
         if fname
     }
 
-    template = _env().get_template("report.md.j2")
+    template_name = f"report.{state.lang}.md.j2"
+    try:
+        template = _env().get_template(template_name)
+    except Exception:
+        # Fallback to Russian if requested language template doesn't exist.
+        template = _env().get_template("report.ru.md.j2")
+
     md = template.render(
         state=state,
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),

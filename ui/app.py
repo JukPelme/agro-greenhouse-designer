@@ -124,7 +124,7 @@ with st.sidebar:
 
 if mode == t("mode_normal", L):
     st.success(t("demo_normal_banner", L))
-    state = _load_cached("default_run.json")
+    state = _load_cached(f"default_run.{L}.json")
     if state is None:
         st.error(t("cache_not_found", L))
     else:
@@ -135,7 +135,7 @@ if mode == t("mode_normal", L):
 
 elif mode == t("mode_failed", L):
     st.warning(t("demo_failed_banner", L))
-    state = _load_cached("failed_run.json")
+    state = _load_cached(f"failed_run.{L}.json")
     if state is None:
         st.error(t("cache_failed_not_found", L))
     else:
@@ -216,7 +216,7 @@ else:
         from src.schemas.state import GraphState
 
         with st.spinner(t("spinner_text", L)):
-            raw = graph.invoke({"brief": brief}, {"recursion_limit": 25})
+            raw = graph.invoke({"brief": brief, "lang": L}, {"recursion_limit": 25})
             state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
 
         st.success(t("done_iterations", L, n=state.iteration))

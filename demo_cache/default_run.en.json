@@ -1,0 +1,185 @@
+{
+  "brief": {
+    "project_name": "Тепличный комплекс «Заря»",
+    "greenhouse_type": "year_round",
+    "target_crop": "tomato",
+    "target_annual_yield_t": 500.0,
+    "site": {
+      "region": "Краснодарский край",
+      "plot_area_m2": 20000.0,
+      "plot_length_m": 200.0,
+      "plot_width_m": 100.0,
+      "elevation_m": 0.0,
+      "soil_type": "loam",
+      "groundwater_depth_m": 3.0,
+      "has_grid_power": true,
+      "has_water_supply": true,
+      "has_gas_supply": false,
+      "distance_to_animal_facilities_m": 1000.0,
+      "snow_transfer_volume_m3_per_m": 0.0
+    },
+    "budget_rub": null,
+    "notes": "Стандартное портфолио-демо."
+  },
+  "lang": "en",
+  "climate": {
+    "region": "Краснодарский край",
+    "t_design_winter_c": -19.0,
+    "t_design_summer_c": 29.4,
+    "heating_degree_days": 2510.0,
+    "heating_period_days": 149,
+    "avg_wind_speed_winter_ms": 3.6,
+    "snow_load_kpa": 1.0,
+    "wind_load_kpa": 0.38,
+    "solar_radiation_winter_mj_m2_day": 3.8,
+    "is_northern": false
+  },
+  "analyst_notes": "Целевая урожайность относительно участка: 25.0 кг/м²/год",
+  "design": {
+    "variant_id": "v1",
+    "rationale": "Для круглогодичного выращивания томата в Краснодарском крае выбрана блочная многопролётная теплица с остеклением: стекло обеспечивает максимальное светопропускание и долговечность, что критично для шпалерной культуры с подвязкой. Компоновка из двух крупных блоков позволяет вписаться в участок по длине и ширине, сохранив нормативный разрыв между блоками. Прямолинейный скат кровли с достаточным уклоном обеспечивает эффективный сток осадков и снеговую нагрузку по нормам. Высота в коньке принята с запасом сверх минимальных 5,5 м, необходимых для шпалерного ведения томата при круглогодичной эксплуатации. Подсобные зоны (котельная, склад, технический узел) размещены вдоль торца участка, не занимая тепличную площадь.",
+    "blocks": [
+      {
+        "name": "Блок А",
+        "length_m": 96.0,
+        "width_m": 54.0,
+        "ridge_height_m": 6.0,
+        "eave_height_m": 4.0,
+        "covering": "glass",
+        "light_transmittance": 0.88,
+        "layout": "block",
+        "span_count": 6,
+        "span_width_m": 9.0,
+        "roof_shape": "straight",
+        "roof_slope_pct": 45.0,
+        "glass_thickness_mm": 4.0,
+        "opaque_share_pct": 12.0,
+        "steel_profile_thickness_mm": 1.5,
+        "glazing_fastener_thickness_mm": 0.6,
+        "slenderness_ratio": 150.0,
+        "relative_deflection_purlin": 0.004,
+        "relative_deflection_lotok": 0.002857
+      },
+      {
+        "name": "Блок Б",
+        "length_m": 96.0,
+        "width_m": 54.0,
+        "ridge_height_m": 6.0,
+        "eave_height_m": 4.0,
+        "covering": "glass",
+        "light_transmittance": 0.88,
+        "layout": "block",
+        "span_count": 6,
+        "span_width_m": 9.0,
+        "roof_shape": "straight",
+        "roof_slope_pct": 45.0,
+        "glass_thickness_mm": 4.0,
+        "opaque_share_pct": 12.0,
+        "steel_profile_thickness_mm": 1.5,
+        "glazing_fastener_thickness_mm": 0.6,
+        "slenderness_ratio": 150.0,
+        "relative_deflection_purlin": 0.004,
+        "relative_deflection_lotok": 0.002857
+      }
+    ],
+    "aux_zones": [
+      {
+        "name": "Котельная / энергоблок",
+        "area_m2": 120.0,
+        "purpose": "Размещение котлов на электроэнергии, систем отопления и вентиляции"
+      },
+      {
+        "name": "Склад агрохимии и расходных материалов",
+        "area_m2": 80.0,
+        "purpose": "Хранение удобрений, средств защиты растений, упаковки"
+      },
+      {
+        "name": "Технический узел полива и фертигации",
+        "area_m2": 60.0,
+        "purpose": "Узлы капельного полива, дозирующие насосы, резервуары растворов"
+      },
+      {
+        "name": "Административно-бытовой блок",
+        "area_m2": 80.0,
+        "purpose": "Офис, раздевалки, санузлы персонала"
+      }
+    ],
+    "estimated_footprint_m2": 10368.0,
+    "plinth_height_m": 0.4,
+    "foundation_above_soil_m": 0.4,
+    "fence_height_m": 1.8,
+    "block_spacing_m": 8.0,
+    "aux_share_pct": 3.279320987654321,
+    "min_block_spacing_m": 8.0
+  },
+  "engineering": {
+    "heat": {
+      "design_temp_diff_c": 37.0,
+      "envelope_area_m2": 14323.2,
+      "overall_heat_transfer_coef_w_m2k": 6.4,
+      "transmission_loss_kw": 3391.7,
+      "infiltration_loss_kw": 678.3,
+      "total_peak_load_kw": 4070.1,
+      "annual_heat_demand_mwh": 6626.5,
+      "supply_temp_c": 95.0,
+      "share_to_lower_zone_pct": 45.0,
+      "warm_air_share_pct": 42.0,
+      "subsoil_heat_depth_at_walls_m": 0.075,
+      "subsoil_heat_depth_m": 0.45
+    },
+    "water": {
+      "daily_demand_m3": 46.66,
+      "peak_hourly_m3": 5.83,
+      "annual_demand_m3": 13997.0,
+      "irrigation_method": "Капельное (по умолчанию)",
+      "reliability_category": 2,
+      "hose_service_radius_m": 40.0,
+      "jet_break_mm": 80.0,
+      "zinc_coating_um": 70.0,
+      "drain_depth_m": 0.8
+    },
+    "light": {
+      "target_dli_mol_m2_day": 22.0,
+      "natural_dli_winter_mol_m2_day": 6.7,
+      "supplemental_required": true,
+      "installed_lamp_power_w_m2": 210.5,
+      "supplemental_kwh_year": 5203983.0,
+      "aisle_floor_illuminance_lx": 8.0
+    },
+    "ventilation": {
+      "summer_air_changes_per_hour": 60.0,
+      "required_vent_opening_pct_of_floor": 27.6,
+      "forced_vent_required": false,
+      "opening_share_of_envelope_pct": 20.0
+    },
+    "loads": {
+      "snow_load_total_kn": 16692.0,
+      "wind_load_total_kn": 730.0,
+      "notes": "",
+      "snow_overload_factor": 1.4,
+      "wind_q10_factor": 1.0,
+      "wind_q2_factor": 0.6,
+      "trellis_load_n_per_m2": 150.0,
+      "trellis_overload_factor": 1.3,
+      "lotok_width_m": 0.25
+    }
+  },
+  "validation": {
+    "issues": [
+      {
+        "rule_id": "ENG.2-aux-share",
+        "severity": "warning",
+        "message": "Подсобные зоны должны занимать 5–30% площади комплекса. Меньше — нехватка для обслуживания; больше — неэффективное использование участка.",
+        "actual_value": "3.279320987654321",
+        "required_value": "[5.0, 30.0]",
+        "sp_citation": "Инженерная проверка (не из СП): обоснованная доля подсобок"
+      }
+    ],
+    "rules_checked": 33
+  },
+  "iteration": 1,
+  "max_iterations": 3,
+  "report_markdown": "# Pre-design solution: Тепличный комплекс «Заря»\n\n**Region:** Краснодарский край\n**Greenhouse type:** year_round\n**Crop:** tomato\n**Target yield:** 500.0 t/year\n**Generated:** 2026-06-13 01:21\n\n---\n\n## 1. Site inputs and analysis\n\nЦелевая урожайность относительно участка: 25.0 кг/м²/год\n\n**Climate parameters (per Russian SP 131.13330):**\n\n| Parameter | Value |\n| --- | --- |\n| Design winter temperature (t5) | -19.0 °C |\n| Design summer temperature | 29.4 °C |\n| Heating degree-days | 2510.0 |\n| Heating period | 149 days |\n| Snow load | 1.0 kPa |\n| Wind load | 0.38 kPa |\n| Solar radiation (winter) | 3.8 MJ/m²/day |\n\n---\n\n## 2. Design solution (variant v1)\n\n**Rationale:** Для круглогодичного выращивания томата в Краснодарском крае выбрана блочная многопролётная теплица с остеклением: стекло обеспечивает максимальное светопропускание и долговечность, что критично для шпалерной культуры с подвязкой. Компоновка из двух крупных блоков позволяет вписаться в участок по длине и ширине, сохранив нормативный разрыв между блоками. Прямолинейный скат кровли с достаточным уклоном обеспечивает эффективный сток осадков и снеговую нагрузку по нормам. Высота в коньке принята с запасом сверх минимальных 5,5 м, необходимых для шпалерного ведения томата при круглогодичной эксплуатации. Подсобные зоны (котельная, склад, технический узел) размещены вдоль торца участка, не занимая тепличную площадь.\n\n**Total growing area:** 10368 m²\n**Complex footprint (with auxiliary):** 10368.0 m²\n\n### Greenhouse blocks\n\n- **Блок А** — 96.0 × 54.0 m (area 5184 m²)\n  - Heights: eave 4.0 m, ridge 6.0 m\n  - Layout: block, 6 spans of 9.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 12.0%\n- **Блок Б** — 96.0 × 54.0 m (area 5184 m²)\n  - Heights: eave 4.0 m, ridge 6.0 m\n  - Layout: block, 6 spans of 9.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 12.0%\n\n### Complex structural parameters\n\n| Parameter | Value | SP Clause |\n| --- | --- | --- |\n| Plinth height | 0.4 m | 5.8 |\n| Foundation rise above soil | 0.4 m | 5.9 |\n| Territory fence height | 1.8 m | 4.16 |\n\n### Auxiliary zones\n\n- **Котельная / энергоблок** — 120.0 m² (Размещение котлов на электроэнергии, систем отопления и вентиляции)\n- **Склад агрохимии и расходных материалов** — 80.0 m² (Хранение удобрений, средств защиты растений, упаковки)\n- **Технический узел полива и фертигации** — 60.0 m² (Узлы капельного полива, дозирующие насосы, резервуары растворов)\n- **Административно-бытовой блок** — 80.0 m² (Офис, раздевалки, санузлы персонала)\n\n---\n\n## 3. Engineering calculations\n\n### 3.1. Heat supply\n\n![Heat losses and peak load](charts/v1/energy_balance.png)\n\n- Design temperature difference: **37.0 °C**\n- Envelope area: **14323.2 m²**\n- Overall heat transfer coefficient U: **6.4 W/(m²·K)**\n- Transmission losses: **3391.7 kW**\n- Infiltration losses: **678.3 kW**\n- **Peak heating load: 4070.1 kW**\n- Annual heat demand: **6626.5 MWh**\n- Coolant temperature: **95.0 °C** _(SP 7.9 ≤150)_\n- Lower-zone heat share: **45.0%** _(SP 7.13 ≥40)_\n\n### 3.2. Water supply\n\n![Water demand](charts/v1/water_demand.png)\n\n- Daily demand: **46.66 m³/day**\n- Peak hourly: **5.83 m³/h**\n- Annual: **13997 m³/year**\n- Irrigation method: Капельное (по умолчанию)\n- Reliability category: **II** _(SP 6.14)_\n- Hose service radius: **40.0 m** _(SP 6.8 ≤45)_\n\n### 3.3. Lighting and supplemental\n\n![Light balance](charts/v1/light_balance.png)\n\n- Target DLI: **22.0 mol/m²/day**\n- Natural winter DLI: **6.7 mol/m²/day**\n- **Supplemental lighting required**: installed 210.5 W/m², consumption 5203983 kWh/year\n- Aisle floor illuminance: 8.0 lx _(SP 8.3 ≤10)_\n\n### 3.4. Annual energy consumption\n\n![Annual energy breakdown](charts/v1/annual_energy.png)\n\n### 3.5. Ventilation\n\n- Summer target air changes per hour: **60.0 h⁻¹**\n- Vent opening share of envelope: **20.0%** _(SP 7.18 ≥20, ≥10 north of 60°N)_\n- Vent opening share of floor: 27.6%\n- Forced ventilation: **not required**\n\n### 3.6. Structural loads\n\n- Snow load on roof: **16692.0 kN** (γ=1.4)\n- Wind load on walls: **730.0 kN** (q₁₀=1.0, q₂=0.6)\n- Trellis load: 150.0 N/m² (γ=1.3)\n\n_Overload factors and normative values per SP 107.13330 clause 5.14._\n\n---\n\n## 4. SP 107.13330 compliance check\n\nRules checked: **33**\n\n### WARNING — ENG.2-aux-share\n\nПодсобные зоны должны занимать 5–30% площади комплекса. Меньше — нехватка для обслуживания; больше — неэффективное использование участка.\n\n- Actual: `3.279320987654321`\n- Required: `[5.0, 30.0]`\n- **Source** _(SP 107.13330, original Russian text)_: Инженерная проверка (не из СП): обоснованная доля подсобок\n\n\n---\n\n_Generated by agro-greenhouse-designer. Outputs are pre-design estimates and require validation by a qualified engineer before detailed documentation._",
+  "report_pdf_path": "docs/report_v1.pdf",
+  "errors": []
+}

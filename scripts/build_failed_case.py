@@ -60,23 +60,29 @@ def main() -> None:
         for name, fname in chart_files.items()
         if fname
     }
-    env = Environment(
-        loader=FileSystemLoader(str(ROOT / "src" / "templates")),
-        autoescape=select_autoescape(),
-        trim_blocks=True,
-        lstrip_blocks=True,
-    )
-    state.report_markdown = env.get_template("report.md.j2").render(
-        state=state,
-        generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),
-        charts=chart_rel,
-    )
 
-    out_json = ROOT / "demo_cache" / "failed_run.json"
-    out_json.parent.mkdir(exist_ok=True)
-    out_json.write_text(state.model_dump_json(indent=2, exclude={"messages"}), encoding="utf-8")
+    from src.agents.reporter import reporter_node
 
-    (ROOT / "docs" / "failed_example.md").write_text(state.report_markdown, encoding="utf-8")
+    out_dir = ROOT / "demo_cache"
+    out_dir.mkdir(exist_ok=True)
+    docs_dir = ROOT / "docs"
+
+    for lang in ("ru", "en"):
+        state.lang = lang
+        result = reporter_node(state)
+        state.report_markdown = result["report_markdown"]
+        state.report_pdf_path = result.get("report_pdf_path")
+
+        json_out = out_dir / f"failed_run.{lang}.json"
+        json_out.write_text(state.model_dump_json(indent=2, exclude={"messages"}), encoding="utf-8")
+
+        md_out = docs_dir / f"failed_example.{lang}.md"
+        md_out.write_text(state.report_markdown, encoding="utf-8")
+        print(f"  {lang}: {json_out.name}, report {len(state.report_markdown)} chars")
+
+    (out_dir / "failed_run.json").write_text(
+        (out_dir / "failed_run.ru.json").read_text(encoding="utf-8"), encoding="utf-8"
+    )
 
     # Render PDF for the failed case too.
     from src.render import markdown_to_pdf
@@ -89,7 +95,7 @@ def main() -> None:
         print(f"PDF skipped: {exc}")
 
     n_errors = sum(1 for i in state.validation.issues if i.severity.value == "error")
-    print(f"Failed-case state saved (JSON): {out_json}")
+    print("Failed-case: ru/en JSON saved in demo_cache/")
     print(f"Charts: {chart_dir} ({len(chart_files)} files)")
     print(f"Iterations: {state.iteration} / max {state.max_iterations}")
     print(f"Validation: {len(state.validation.issues)} issues ({n_errors} errors)")
