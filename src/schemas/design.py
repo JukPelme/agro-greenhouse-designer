@@ -63,6 +63,37 @@ class GreenhouseBlock(BaseModel):
         description="Доля светонепроницаемых конструкций блока, %. ≤15 для стекла, ≤10 для плёнки.",
     )
 
+    # ── СП 107.13330 п. 5.17 — толщина стальных профилей ──
+    steel_profile_thickness_mm: float = Field(
+        default=1.5,
+        ge=0,
+        description="Толщина стальных гнутых профилей ограждающих конструкций, мм (≥1,0 по п. 5.17)",
+    )
+    glazing_fastener_thickness_mm: float = Field(
+        default=0.6,
+        ge=0,
+        description="Толщина деталей крепления стекла/плёнки, мм (≥0,4 по п. 5.17)",
+    )
+
+    # ── СП 107.13330 п. 5.18 — гибкость элементов каркаса ──
+    slenderness_ratio: float = Field(
+        default=150.0,
+        ge=0,
+        description="Расчётная гибкость стальных сжатых элементов каркаса (≤180 по п. 5.18)",
+    )
+
+    # ── СП 107.13330 п. 5.19 — относительные прогибы ──
+    relative_deflection_purlin: float = Field(
+        default=1 / 250,
+        ge=0,
+        description="Относительный прогиб прогонов (≤ 1/200 по п. 5.19 — численно ≤ 0,005)",
+    )
+    relative_deflection_lotok: float = Field(
+        default=1 / 350,
+        ge=0,
+        description="Относительный прогиб лотков (≤ 1/300 по п. 5.19)",
+    )
+
     @property
     def floor_area_m2(self) -> float:
         return self.length_m * self.width_m

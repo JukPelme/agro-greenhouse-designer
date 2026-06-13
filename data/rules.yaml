@@ -280,3 +280,119 @@ rules:
     check:
       check_type: custom
       name: yield_feasibility
+
+  # ── ДОПОЛНИТЕЛЬНЫЕ МАТЕРИАЛЬНЫЕ ТРЕБОВАНИЯ (5.17, 5.18, 5.19) ─────
+
+  - rule_id: SP107.5.17-profile
+    sp_clause: "СП 107.13330 п. 5.17"
+    summary: "Толщина стальных гнутых профилей ограждающих конструкций — не менее 1 мм."
+    severity: warning
+    check:
+      field: design.blocks[*].steel_profile_thickness_mm
+      op: ">="
+      value: 1.0
+
+  - rule_id: SP107.5.17-fastener
+    sp_clause: "СП 107.13330 п. 5.17"
+    summary: "Толщина деталей крепления стекла и плёнки — не менее 0,4 мм."
+    severity: warning
+    check:
+      field: design.blocks[*].glazing_fastener_thickness_mm
+      op: ">="
+      value: 0.4
+
+  - rule_id: SP107.5.18
+    sp_clause: "СП 107.13330 п. 5.18"
+    summary: "Гибкость стальных сжатых элементов каркаса — не более 180."
+    severity: warning
+    check:
+      field: design.blocks[*].slenderness_ratio
+      op: "<="
+      value: 180.0
+
+  - rule_id: SP107.5.19-purlin
+    sp_clause: "СП 107.13330 п. 5.19"
+    summary: "Относительный прогиб прогонов — не более 1/200 (≤ 0,005)."
+    severity: warning
+    check:
+      field: design.blocks[*].relative_deflection_purlin
+      op: "<="
+      value: 0.005
+
+  - rule_id: SP107.5.19-lotok
+    sp_clause: "СП 107.13330 п. 5.19"
+    summary: "Относительный прогиб лотков — не более 1/300 (≈ 0,0033)."
+    severity: warning
+    check:
+      field: design.blocks[*].relative_deflection_lotok
+      op: "<="
+      value: 0.0034
+
+  # ── ВОДОСНАБЖЕНИЕ И ДРЕНАЖ (6.3, 6.15, 6.17) ────────────────────
+
+  - rule_id: SP107.6.3
+    sp_clause: "СП 107.13330 п. 6.3"
+    summary: "Разрыв струи от хозяйственно-питьевого водопровода — не менее 50 мм."
+    severity: error
+    check:
+      field: engineering.water.jet_break_mm
+      op: ">="
+      value: 50.0
+
+  - rule_id: SP107.6.15
+    sp_clause: "СП 107.13330 п. 6.15"
+    summary: "Толщина цинкового покрытия колонн-стояков водостока — не менее 60 мкм."
+    severity: warning
+    check:
+      field: engineering.water.zinc_coating_um
+      op: ">="
+      value: 60.0
+
+  - rule_id: SP107.6.17
+    sp_clause: "СП 107.13330 п. 6.17"
+    summary: "Глубина дренажа: расстояние от поверхности почвы до верха дренажа — не менее 0,7 м."
+    severity: warning
+    check:
+      field: engineering.water.drain_depth_m
+      op: ">="
+      value: 0.7
+
+  # ── ОТОПЛЕНИЕ (7.8, 7.10) ──────────────────────────────────────
+
+  - rule_id: SP107.7.8
+    sp_clause: "СП 107.13330 п. 7.8"
+    summary: "Доля воздушного обогрева в общем тепловом балансе — 20-50% (от типа теплицы по п. 7.8)."
+    severity: info
+    check:
+      field: engineering.heat.warm_air_share_pct
+      op: between
+      value: [20.0, 50.0]
+
+  - rule_id: SP107.7.10-walls
+    sp_clause: "СП 107.13330 п. 7.10"
+    summary: "Глубина подпочвенного обогрева у наружных стен — 0,05-0,10 м (п. 7.10)."
+    severity: info
+    check:
+      field: engineering.heat.subsoil_heat_depth_at_walls_m
+      op: between
+      value: [0.05, 0.10]
+
+  - rule_id: SP107.7.10-soil
+    sp_clause: "СП 107.13330 п. 7.10"
+    summary: "Глубина труб подпочвенного обогрева — не менее 0,4 м."
+    severity: warning
+    check:
+      field: engineering.heat.subsoil_heat_depth_m
+      op: ">="
+      value: 0.4
+
+  # ── КОНСТРУКЦИИ ЛОТКА (5.10) ───────────────────────────────────
+
+  - rule_id: SP107.5.10-lotok-width
+    sp_clause: "СП 107.13330 п. 5.10"
+    summary: "Ширина лотка ендовы в многопролётных теплицах — не менее 0,2 м."
+    severity: warning
+    check:
+      field: engineering.loads.lotok_width_m
+      op: ">="
+      value: 0.2

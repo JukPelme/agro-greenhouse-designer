@@ -60,7 +60,7 @@ flowchart TD
     end
 
     subgraph Knowledge
-        Rules[(rules.yaml<br/>25 machine-checkable rules:<br/>20 from SP + 5 ENG)]
+        Rules[(rules.yaml<br/>38 machine-checkable rules:<br/>33 from SP + 5 ENG)]
         Climate[(SP 131<br/>5 regions)]
         SPIndex[(ChromaDB<br/>RAG over SP 107.pdf)]
     end
@@ -94,8 +94,8 @@ geometry and materials, but heat loss is computed by `src/calc/heat.py` with
 the classic `Q = U·F·ΔT`. This guards against hallucinated kilowatts and
 cubic metres.
 
-> **Rule scope.** v2 covers 20 machine-checkable requirements from SP 107.13330
-> + 5 engineering sanity checks (25 total, see [data/rules.yaml](data/rules.yaml)).
+> **Rule scope.** v2 covers 33 machine-checkable requirements from SP 107.13330
+> + 5 engineering sanity checks (38 total, see [data/rules.yaml](data/rules.yaml)).
 > Extracted from 83 machine-checkable provisions in the document (full list in
 > commit history). Domains covered: geometry (layout, spans, slopes),
 > materials (glass, loads), hvac (coolant, ventilation), water (reliability,

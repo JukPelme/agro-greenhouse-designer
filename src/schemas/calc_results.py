@@ -31,6 +31,23 @@ class HeatLossResult(BaseModel):
         le=100,
         description="Доля теплоты в нижнюю зону высотой 1 м (п. 7.13 ≥40%)",
     )
+    # СП 107.13330 п. 7.8 / п. 7.10
+    warm_air_share_pct: float = Field(
+        default=42.0,
+        ge=0,
+        le=100,
+        description="Доля воздушного обогрева в общем тепловом балансе, % (п. 7.8: 35-50 для однопролётных, 20-40 для многопролётных)",
+    )
+    subsoil_heat_depth_at_walls_m: float = Field(
+        default=0.075,
+        ge=0,
+        description="Глубина подпочвенного обогрева у наружных стен, м (п. 7.10: 0,05-0,10)",
+    )
+    subsoil_heat_depth_m: float = Field(
+        default=0.45,
+        ge=0,
+        description="Глубина подпочвенного обогрева в основной зоне, м (п. 7.10 ≥0,4)",
+    )
 
 
 class WaterDemandResult(BaseModel):
@@ -48,6 +65,22 @@ class WaterDemandResult(BaseModel):
         default=40.0,
         gt=0,
         description="Радиус зоны обслуживания одним поливным краном, м (п. 6.8 ≤45)",
+    )
+    # СП 107.13330 п. 6.3 / п. 6.15 / п. 6.17
+    jet_break_mm: float = Field(
+        default=80.0,
+        ge=0,
+        description="Разрыв струи от хоз.-питьевого водопровода, мм (п. 6.3 ≥50)",
+    )
+    zinc_coating_um: float = Field(
+        default=70.0,
+        ge=0,
+        description="Толщина цинкового покрытия колонн-стояков водостока, мкм (п. 6.15 ≥60)",
+    )
+    drain_depth_m: float = Field(
+        default=0.8,
+        ge=0,
+        description="Расстояние от поверхности почвы до верха дренажа, м (п. 6.17 ≥0,7)",
     )
 
 
@@ -93,6 +126,8 @@ class StructuralLoadsResult(BaseModel):
         description="Нормативная нагрузка от шпалер с растениями, Н/м² (п. 5.14)",
     )
     trellis_overload_factor: float = Field(default=1.3)
+    # СП 107.13330 п. 5.10 — ширина лотка ендовы
+    lotok_width_m: float = Field(default=0.25, ge=0, description="Ширина лотка ендовы, м (п. 5.10 ≥0,2)")
 
 
 class EngineeringReport(BaseModel):
