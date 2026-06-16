@@ -187,9 +187,10 @@ else:
 
     with col2:
         region = st.selectbox(t("region", L), available_regions(), index=0)
-        plot_area = st.number_input(t("plot_area", L), 100, value=20000, step=100)
         plot_len = st.number_input(t("plot_length", L), 10, value=200, step=10)
         plot_w = st.number_input(t("plot_width", L), 10, value=100, step=10)
+        plot_area = float(plot_len) * float(plot_w)
+        st.metric(t("plot_area", L), f"{plot_area:,.0f} м²".replace(",", " "))
         soil = st.selectbox(
             t("soil", L),
             [s.value for s in SoilType],
