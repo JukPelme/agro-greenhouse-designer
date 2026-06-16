@@ -134,6 +134,25 @@ _Not proposed._
 
 _Overload factors and normative values per SP 107.13330 clause 5.14._
 
+### 3.7. Geotechnical conditions and foundation
+
+{% if state.engineering.geotechnical %}
+- Foundation soil: **{{ state.engineering.geotechnical.soil_type }}**
+- Groundwater depth: **{{ state.engineering.geotechnical.groundwater_depth_m }} m**
+- Recommended foundation type: **{{ state.engineering.geotechnical.recommended_foundation }}**
+- Minimum embedment depth: **{{ state.engineering.geotechnical.foundation_depth_min_m }} m**
+- Perimeter drainage: **{{ "required" if state.engineering.geotechnical.drainage_required else "not required" }}**
+- Waterproofing grade: **{{ state.engineering.geotechnical.waterproofing_grade }}**
+{% if state.engineering.geotechnical.notes %}
+
+> {{ state.engineering.geotechnical.notes }}
+{% endif %}
+
+_Preliminary recommendations. A proper engineering-geological survey per SP 47.13330 is required for working documentation._
+{% else %}
+_Geotechnical analysis not performed._
+{% endif %}
+
 ---
 
 ## 4. SP 107.13330 compliance check

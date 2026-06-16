@@ -396,3 +396,37 @@ rules:
       field: engineering.loads.lotok_width_m
       op: ">="
       value: 0.2
+
+
+  # ── ГЕОТЕХНИКА (ENG: на основе инженерных правил, не СП 107) ────
+
+  - rule_id: ENG.6-drainage-required
+    sp_clause: "Инженерная проверка: дренаж при глинистом грунте и высоком УГВ"
+    summary: "При глинистом грунте или УГВ <1 м должен быть предусмотрен периметральный дренаж."
+    severity: warning
+    check:
+      field: engineering.geotechnical.drainage_required
+      op: "=="
+      value: true
+    applies_when:
+      brief.site.soil_type: clay
+
+  - rule_id: ENG.7-foundation-depth
+    sp_clause: "Инженерная проверка: глубина заложения фундамента"
+    summary: "Минимальная глубина заложения фундамента — не менее 0,5 м (от типа грунта)."
+    severity: warning
+    check:
+      field: engineering.geotechnical.foundation_depth_min_m
+      op: ">="
+      value: 0.5
+
+  - rule_id: ENG.8-waterproofing
+    sp_clause: "Инженерная проверка: гидроизоляция при высоком УГВ"
+    summary: "При УГВ <1,5 м требуется усиленная гидроизоляция фундамента."
+    severity: warning
+    check:
+      field: engineering.geotechnical.waterproofing_grade
+      op: "=="
+      value: enhanced
+    applies_when:
+      brief.site.soil_type: clay

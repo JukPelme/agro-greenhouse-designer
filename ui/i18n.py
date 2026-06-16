@@ -112,7 +112,7 @@ UI: dict[str, dict[Lang, str]] = {
     "plot_area": {"ru": "Площадь участка, м²", "en": "Plot area, m²"},
     "plot_length": {"ru": "Длина, м", "en": "Length, m"},
     "plot_width": {"ru": "Ширина, м", "en": "Width, m"},
-    "soil": {"ru": "Грунт", "en": "Soil"},
+    "soil": {"ru": "Грунт основания", "en": "Foundation soil"},
     "run_button": {"ru": "Запустить проектирование", "en": "Run pre-design"},
     "spinner_text": {
         "ru": "Агенты работают (Designer → Engineer → Validator → Reporter)...",

@@ -61,7 +61,7 @@ flowchart TD
     end
 
     subgraph Knowledge
-        Rules[(rules.yaml<br/>38 machine-checkable rules:<br/>33 from SP + 5 ENG)]
+        Rules[(rules.yaml<br/>41 machine-checkable rules:<br/>33 from SP + 8 ENG)]
         Climate[(SP 131<br/>5 regions)]
         SPIndex[(ChromaDB<br/>RAG over SP 107.pdf)]
     end
@@ -96,7 +96,7 @@ the classic `Q = U·F·ΔT`. This guards against hallucinated kilowatts and
 cubic metres.
 
 > **Rule scope.** v2 covers 33 machine-checkable requirements from SP 107.13330
-> + 5 engineering sanity checks (38 total, see [data/rules.yaml](data/rules.yaml)).
+> + 8 engineering sanity checks (41 total, see [data/rules.yaml](data/rules.yaml)).
 > Extracted from 83 machine-checkable provisions in the document (full list in
 > commit history). Domains covered: geometry (layout, spans, slopes),
 > materials (glass, loads), hvac (coolant, ventilation), water (reliability,

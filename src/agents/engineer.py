@@ -10,7 +10,7 @@ Outputs: GraphState.engineering
 
 from __future__ import annotations
 
-from ..calc import heat, lighting, structural, ventilation, water
+from ..calc import geotechnical, heat, lighting, structural, ventilation, water
 from ..schemas.calc_results import EngineeringReport
 from ..schemas.state import GraphState
 
@@ -34,6 +34,7 @@ def engineer_node(state: GraphState) -> dict:
     )
     vent_result = ventilation.compute_ventilation(design=design, climate=climate)
     loads_result = structural.compute_loads(design=design, climate=climate, crop=brief.target_crop)
+    geotech_result = geotechnical.compute_geotechnical(site=brief.site)
 
     return {
         "engineering": EngineeringReport(
@@ -42,5 +43,6 @@ def engineer_node(state: GraphState) -> dict:
             light=light_result,
             ventilation=vent_result,
             loads=loads_result,
+            geotechnical=geotech_result,
         )
     }

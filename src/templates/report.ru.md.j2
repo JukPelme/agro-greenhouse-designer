@@ -134,6 +134,25 @@ _Не предложены._
 
 _Коэффициенты перегрузки и нормативные значения — СП 107.13330 п. 5.14._
 
+### 3.7. Геотехнические условия и основание
+
+{% if state.engineering.geotechnical %}
+- Грунт основания: **{{ state.engineering.geotechnical.soil_type }}**
+- УГВ (уровень грунтовых вод): **{{ state.engineering.geotechnical.groundwater_depth_m }} м**
+- Рекомендованный тип фундамента: **{{ state.engineering.geotechnical.recommended_foundation }}**
+- Минимальная глубина заложения: **{{ state.engineering.geotechnical.foundation_depth_min_m }} м**
+- Периметральный дренаж: **{{ "требуется" if state.engineering.geotechnical.drainage_required else "не требуется" }}**
+- Гидроизоляция: **{% if state.engineering.geotechnical.waterproofing_grade == "enhanced" %}усиленная{% else %}стандартная{% endif %}**
+{% if state.engineering.geotechnical.notes %}
+
+> {{ state.engineering.geotechnical.notes }}
+{% endif %}
+
+_Рекомендации предварительные, требуется инженерно-геологический отчёт по СП 47.13330._
+{% else %}
+_Геотехнический анализ не выполнен._
+{% endif %}
+
 ---
 
 ## 4. Проверка по СП 107.13330

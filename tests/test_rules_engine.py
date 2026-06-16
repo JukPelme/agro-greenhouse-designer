@@ -21,13 +21,16 @@ from src.schemas.project import (
 )
 
 
-def _engineer(design, climate, crop):
+def _engineer(design, climate, crop, site=None):
+    from src.calc.geotechnical import compute_geotechnical
+    geotech = compute_geotechnical(site) if site is not None else None
     return EngineeringReport(
         heat=compute_heat_balance(design, climate),
         water=compute_water_demand(design, crop, climate),
         light=compute_lighting(design, crop, climate),
         ventilation=compute_ventilation(design, climate),
         loads=compute_loads(design, climate),
+        geotechnical=geotech,
     )
 
 
@@ -367,7 +370,7 @@ def test_every_rule_resolves_its_field_on_a_complete_design():
         estimated_footprint_m2=3000,
         block_spacing_m=6.0,
     )
-    eng = _engineer(design, climate, CropType.TOMATO)
+    eng = _engineer(design, climate, CropType.TOMATO, site=brief.site)
     issues, _ = evaluate_rules(brief, design, eng, climate=climate)
     no_data = [i for i in issues if "не удалось проверить" in i.message.lower()]
     assert not no_data, f"These rules can not resolve their field: {[i.rule_id for i in no_data]}"

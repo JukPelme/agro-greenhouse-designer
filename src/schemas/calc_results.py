@@ -131,9 +131,32 @@ class StructuralLoadsResult(BaseModel):
     lotok_width_m: float = Field(default=0.25, ge=0, description="Ширина лотка ендовы, м (п. 5.10 ≥0,2)")
 
 
+class FoundationType(str):
+    STRIP = "strip"        # ленточный
+    PILE = "pile"          # свайный
+    SLAB = "slab"          # монолитная плита
+    SHALLOW = "shallow"    # мелкозаглублённый
+
+
+class GeotechnicalResult(BaseModel):
+    """Geotechnical recommendations driven by site soil + groundwater depth.
+
+    These are pre-design defaults — a real geotechnical survey supersedes them.
+    """
+
+    soil_type: str = Field(..., description="Тип грунта основания: sand / loam / clay / rocky")
+    groundwater_depth_m: float = Field(..., ge=0)
+    recommended_foundation: str = Field(..., description="strip / pile / slab / shallow")
+    foundation_depth_min_m: float = Field(..., ge=0, description="Минимальная глубина заложения, м")
+    drainage_required: bool = Field(..., description="Нужен ли периметральный дренаж")
+    waterproofing_grade: str = Field(..., description="standard / enhanced")
+    notes: str = Field(default="")
+
+
 class EngineeringReport(BaseModel):
     heat: HeatLossResult
     water: WaterDemandResult
     light: LightingResult
     ventilation: VentilationResult
     loads: StructuralLoadsResult
+    geotechnical: GeotechnicalResult | None = None
