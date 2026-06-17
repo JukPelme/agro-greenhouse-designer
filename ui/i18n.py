@@ -120,6 +120,8 @@ UI: dict[str, dict[Lang, str]] = {
     },
     "done_iterations": {"ru": "Готово. Итераций: {n}.", "en": "Done. Iterations: {n}."},
     "state_label": {"ru": "State", "en": "State"},
+    "download_md": {"ru": "Скачать отчёт (.md)", "en": "Download report (.md)"},
+    "download_pdf": {"ru": "Скачать отчёт (.pdf)", "en": "Download report (.pdf)"},
 }
 
 

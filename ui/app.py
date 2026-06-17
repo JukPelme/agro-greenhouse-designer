@@ -61,6 +61,36 @@ def _load_cached(filename: str):
     return None
 
 
+def _render_report_with_downloads(state, lang_code: str, file_prefix: str) -> None:
+    """Render the report markdown and offer Markdown + PDF downloads."""
+    st.markdown(_inline_images(state.report_markdown), unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.download_button(
+            label=t("download_md", lang_code),
+            data=state.report_markdown.encode("utf-8"),
+            file_name=f"{file_prefix}.{lang_code}.md",
+            mime="text/markdown",
+            use_container_width=True,
+        )
+    with col2:
+        if state.report_pdf_path:
+            pdf_path = ROOT / state.report_pdf_path
+            if pdf_path.exists():
+                st.download_button(
+                    label=t("download_pdf", lang_code),
+                    data=pdf_path.read_bytes(),
+                    file_name=f"{file_prefix}.{lang_code}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True,
+                )
+            else:
+                st.caption("PDF недоступен" if lang_code == "ru" else "PDF unavailable")
+        else:
+            st.caption("PDF недоступен" if lang_code == "ru" else "PDF unavailable")
+
+
 # ─── Page config & language ───────────────────────────────────────────────────
 
 st.set_page_config(
@@ -129,7 +159,7 @@ if mode == t("mode_normal", L):
         st.error(t("cache_not_found", L))
     else:
         st.subheader(t("report_subheader", L))
-        st.markdown(_inline_images(state.report_markdown), unsafe_allow_html=True)
+        _render_report_with_downloads(state, L, "agro_report_normal")
         with st.expander(t("state_expander", L)):
             st.code(state.model_dump_json(indent=2, exclude={"messages"}))
 
@@ -140,7 +170,7 @@ elif mode == t("mode_failed", L):
         st.error(t("cache_failed_not_found", L))
     else:
         st.subheader(t("report_subheader_failed", L))
-        st.markdown(_inline_images(state.report_markdown), unsafe_allow_html=True)
+        _render_report_with_downloads(state, L, "agro_report_failed")
         with st.expander(t("issues_expander", L)):
             for issue in state.validation.issues:
                 src = issue.sp_citation or "—"
@@ -222,6 +252,6 @@ else:
 
         st.success(t("done_iterations", L, n=state.iteration))
         st.subheader(t("report_subheader", L))
-        st.markdown(_inline_images(state.report_markdown), unsafe_allow_html=True)
+        _render_report_with_downloads(state, L, "agro_report_live")
         with st.expander(t("state_label", L)):
             st.code(state.model_dump_json(indent=2, exclude={"messages"}))
