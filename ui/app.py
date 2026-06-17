@@ -250,8 +250,15 @@ else:
             raw = graph.invoke({"brief": brief, "lang": L}, {"recursion_limit": 25})
             state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
 
-        st.success(t("done_iterations", L, n=state.iteration))
+        # Persist in session_state so download_button reruns don't wipe it.
+        st.session_state["live_state"] = state
+        st.session_state["live_lang"] = L
+
+    # Render persisted result for as long as it's in session_state.
+    live = st.session_state.get("live_state")
+    if live is not None and st.session_state.get("live_lang") == L:
+        st.success(t("done_iterations", L, n=live.iteration))
         st.subheader(t("report_subheader", L))
-        _render_report_with_downloads(state, L, "agro_report_live")
+        _render_report_with_downloads(live, L, "agro_report_live")
         with st.expander(t("state_label", L)):
-            st.code(state.model_dump_json(indent=2, exclude={"messages"}))
+            st.code(live.model_dump_json(indent=2, exclude={"messages"}))
