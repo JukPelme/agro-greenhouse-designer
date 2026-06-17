@@ -210,6 +210,7 @@ rules:
     applies_when:
       engineering.ventilation.forced_vent_required: false
       climate.is_northern: false
+      design.blocks[*].layout: block
 
   - rule_id: SP107.7.18-north
     sp_clause: "СП 107.13330 п. 7.18"
@@ -222,6 +223,7 @@ rules:
     applies_when:
       engineering.ventilation.forced_vent_required: false
       climate.is_northern: true
+      design.blocks[*].layout: block
 
   # ── ОСВЕЩЕНИЕ (8.3) ─────────────────────────────────────────────
 

@@ -29,7 +29,8 @@ htmlcov/
 *.swo
 
 # Project
-chroma_db/
+# chroma_db/ is now committed so the Streamlit Cloud demo has RAG citations
+# chroma_db/
 *.log
 .langsmith/
 
