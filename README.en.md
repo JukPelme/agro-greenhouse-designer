@@ -43,6 +43,23 @@ dimensions.
 ## Architecture
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#2C5F2D',
+    'primaryTextColor': '#FFFFFF',
+    'primaryBorderColor': '#1a3d1c',
+    'lineColor': '#97BC62',
+    'secondaryColor': '#5B8A72',
+    'tertiaryColor': '#3a3a3a',
+    'tertiaryTextColor': '#F3F5F1',
+    'tertiaryBorderColor': '#97BC62',
+    'background': '#1e1e1e',
+    'mainBkg': '#2C5F2D',
+    'nodeTextColor': '#FFFFFF',
+    'edgeLabelBackground': '#1e1e1e'
+  }
+}}%%
 flowchart TD
     Brief([User brief]) --> Analyst
 
