@@ -77,3 +77,16 @@ def test_seasonal_uses_milder_design_temp():
     # Peak load and annual heat for seasonal must be a fraction of year_round
     assert sea.total_peak_load_kw < yr.total_peak_load_kw / 2
     assert sea.annual_heat_demand_mwh < yr.annual_heat_demand_mwh / 3
+
+
+
+def test_nursery_uses_minus_5_design_temp():
+    """Nursery branch: ΔT = 18 − (−5) = 23 °C (between seasonal +5 and winter t5)."""
+    from src.schemas.project import GreenhouseType
+    climate = lookup_climate("Московская область")
+    n = compute_heat_balance(_sample_design(), climate, greenhouse_type=GreenhouseType.NURSERY)
+    assert n.design_temp_diff_c == 23.0
+    yr = compute_heat_balance(_sample_design(), climate, greenhouse_type=GreenhouseType.YEAR_ROUND)
+    sea = compute_heat_balance(_sample_design(), climate, greenhouse_type=GreenhouseType.SEASONAL)
+    # Nursery sits between seasonal (warm) and year_round (cold)
+    assert sea.total_peak_load_kw < n.total_peak_load_kw < yr.total_peak_load_kw

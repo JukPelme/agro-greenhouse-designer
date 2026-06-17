@@ -4,7 +4,7 @@
 **Greenhouse type:** year-round
 **Crop:** tomato
 **Target yield:** 500.0 t/year
-**Generated:** 2026-06-17 05:43
+**Generated:** 2026-06-17 06:34
 
 ---
 
@@ -28,23 +28,23 @@ Target yield per plot area: 25.0 kg/m²/year
 
 ## 2. Design solution (variant v1)
 
-**Rationale:** A year-round multi-span block-type greenhouse complex is selected for tomato trellis cultivation, which requires a ridge height well above 5.5 m to accommodate tall-growing plants and overhead irrigation infrastructure. Glass cladding was chosen for its superior light transmittance, which is critical in a tomato production facility targeting high annual yields — it maximises both direct and diffuse solar radiation reaching the crop canopy, especially important during the shorter winter days in the Krasnodar region. The layout consists of two parallel greenhouse blocks arranged along the 200 m plot length, each with ten 9 m spans across the 100 m plot width, providing the necessary growing area within the available footprint while preserving a clear access corridor between blocks and around the perimeter. The loam soil with a groundwater depth of 3.0 m is suitable for a conventional strip foundation at approximately 1 m embedment depth, with waterproofing applied as a precaution; no perimeter drainage is required at this groundwater level. Auxiliary zones are positioned at one end of the complex, grouped for operational efficiency, and collectively exceed 7% of the total footprint as required.
+**Rationale:** Year-round glass greenhouse complex for trellis tomato production in the Krasnodar region. Glass covering was chosen for its superior light transmittance (τ ≈ 0.88), which is critical for high-yield tomato cultivation during short winter days in the southern climate. A multi-span block layout is adopted to maximise the usable growing area within the 200 × 100 m plot while maintaining the structural rigidity required for year-round operation with full heating and supplemental lighting. Ridge height is set to 6.0 m to accommodate long trellis culture and overhead infrastructure (heating pipes, lighting bars, monorail). Soil type is loam with groundwater at 3.0 m depth, which is above the frost-heaving threshold, so a conventional strip foundation (depth 1.0 m) with standard waterproofing is recommended. The two main growing blocks are arranged along the plot length with a service road between them, and a full auxiliary zone (boiler house, storage, packaging, staff, admin, nutrient mixing) is grouped at one gable end.
 
-**Total growing area:** 17280 m²
+**Total growing area:** 10368 m²
 **Complex footprint (with auxiliary):** 20000.0 m²
 
 ### Greenhouse blocks
 
-- **Block A** — 96.0 × 90.0 m (area 8640 m²)
+- **Block A** — 96.0 × 54.0 m (area 5184 m²)
   - Heights: eave 4.0 m, ridge 6.0 m
-  - Layout: block (multi-span), 10 spans of 9.0 m
+  - Layout: block (multi-span), 6 spans of 9.0 m
   - Roof: straight, slope 45.0%
-  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 12.0%
-- **Block B** — 96.0 × 90.0 m (area 8640 m²)
+  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 14.0%
+- **Block B** — 96.0 × 54.0 m (area 5184 m²)
   - Heights: eave 4.0 m, ridge 6.0 m
-  - Layout: block (multi-span), 10 spans of 9.0 m
+  - Layout: block (multi-span), 6 spans of 9.0 m
   - Roof: straight, slope 45.0%
-  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 12.0%
+  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 14.0%
 
 ### Complex structural parameters
 
@@ -56,12 +56,12 @@ Target yield per plot area: 25.0 kg/m²/year
 
 ### Auxiliary zones
 
-- **Boiler house** — 180.0 m² (Heating plant and utility room; electric boiler equipment (no gas supply on site))
-- **Tool and fertiliser storage** — 150.0 m² (Storage of agricultural tools, fertilisers and plant-protection agents)
-- **Nutrient mixing and pumping room** — 120.0 m² (Preparation and distribution of nutrient solutions for hydroponic/drip irrigation)
-- **Packaging and sorting hall** — 200.0 m² (Sorting, grading, packaging and pre-cooling of harvested tomatoes)
-- **Staff facilities** — 100.0 m² (Changing rooms, sanitary facilities, rest room and first-aid post for personnel)
-- **Administrative building** — 150.0 m² (Offices, meeting room and control room for complex management (complex >5000 m²))
+- **Boiler house** — 120.0 m² (Gas-independent electric boiler plant and heat distribution for year-round heating)
+- **Tool and fertiliser storage** — 80.0 m² (Storage of tools, consumables and mineral fertilisers)
+- **Packaging and sorting hall** — 100.0 m² (Post-harvest handling, grading and packaging of tomato produce)
+- **Staff facilities** — 60.0 m² (Locker rooms, showers, canteen and rest area for personnel)
+- **Administrative building** — 80.0 m² (Offices, meeting room and security post)
+- **Nutrient mixing and pumping room** — 60.0 m² (Preparation and distribution of nutrient solution for drip irrigation)
 
 ---
 
@@ -72,12 +72,12 @@ Target yield per plot area: 25.0 kg/m²/year
 ![Heat losses and peak load](charts/v1/energy_balance.png)
 
 - Design temperature difference: **37.0 °C**
-- Envelope area: **22848.0 m²**
+- Envelope area: **14323.2 m²**
 - Overall heat transfer coefficient U: **6.4 W/(m²·K)**
-- Transmission losses: **5410.4 kW**
-- Infiltration losses: **1082.1 kW**
-- **Peak heating load: 6492.5 kW**
-- Annual heat demand: **10570.5 MWh**
+- Transmission losses: **3391.7 kW**
+- Infiltration losses: **678.3 kW**
+- **Peak heating load: 4070.1 kW**
+- Annual heat demand: **6626.5 MWh**
 - Coolant temperature: **95.0 °C** _(SP 7.9 ≤150)_
 - Lower-zone heat share: **45.0%** _(SP 7.13 ≥40)_
 
@@ -85,9 +85,9 @@ Target yield per plot area: 25.0 kg/m²/year
 
 ![Water demand](charts/v1/water_demand.png)
 
-- Daily demand: **77.76 m³/day**
-- Peak hourly: **9.72 m³/h**
-- Annual: **23328 m³/year**
+- Daily demand: **46.66 m³/day**
+- Peak hourly: **5.83 m³/h**
+- Annual: **13997 m³/year**
 - Irrigation method: Drip (default)
 - Reliability category: **II** _(SP 6.14)_
 - Hose service radius: **40.0 m** _(SP 6.8 ≤45)_
@@ -98,7 +98,7 @@ Target yield per plot area: 25.0 kg/m²/year
 
 - Target DLI: **22.0 mol/m²/day**
 - Natural winter DLI: **6.7 mol/m²/day**
-- **Supplemental lighting required**: installed 210.5 W/m², consumption 8673305 kWh/year
+- **Supplemental lighting required**: installed 210.5 W/m², consumption 5203983 kWh/year
 - Aisle floor illuminance: 8.0 lx _(SP 8.3 ≤10)_
 
 ### 3.4. Annual energy consumption
@@ -109,13 +109,13 @@ Target yield per plot area: 25.0 kg/m²/year
 
 - Summer target air changes per hour: **60.0 h⁻¹**
 - Vent opening share of envelope: **20.0%** _(SP 7.18 ≥20, ≥10 north of 60°N)_
-- Vent opening share of floor: 26.4%
+- Vent opening share of floor: 27.6%
 - Forced ventilation: **not required**
 
 ### 3.6. Structural loads
 
-- Snow load on roof: **27821.0 kN** (γ=1.4)
-- Wind load on walls: **905.0 kN** (q₁₀=1.0, q₂=0.6)
+- Snow load on roof: **16692.0 kN** (γ=1.4)
+- Wind load on walls: **730.0 kN** (q₁₀=1.0, q₂=0.6)
 - Trellis load: 150.0 N/m² (γ=1.3)
 
 _Overload factors and normative values per SP 107.13330 clause 5.14._
@@ -143,7 +143,7 @@ Rules checked: **34**
 
 Подсобные зоны должны занимать 5–30% площади комплекса. Меньше — нехватка для обслуживания; больше — неэффективное использование участка.
 
-- Actual: `4.5`
+- Actual: `2.5`
 - Required: `[5.0, 30.0]`
 - **Source** _(SP 107.13330, original Russian text)_: Инженерная проверка (не из СП): обоснованная доля подсобок
 

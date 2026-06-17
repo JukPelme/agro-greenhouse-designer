@@ -21,21 +21,27 @@ _U_BY_COVERING: dict[CoveringMaterial, float] = {
 
 _INFILTRATION_FACTOR = 0.20
 
-# Lowest outside temperature a seasonal/nursery greenhouse still has to handle
-# (representative cold spring/autumn night). Production code would derive this
-# from monthly climate data; for pre-design a single value is enough.
-_SEASONAL_T_DESIGN_C = 5.0
+# Representative outside temperatures the greenhouse must handle for each
+# operating mode. Production code would derive from monthly climate data;
+# for pre-design a per-mode constant is enough.
+_SEASONAL_T_DESIGN_C = 5.0   # warm spring/autumn night
+_NURSERY_T_DESIGN_C = -5.0   # nursery (rassada) protects from frost; cold but not winter peak
 
 
 def _design_outside_temp(greenhouse_type: GreenhouseType, climate: ClimateData) -> float:
     if greenhouse_type == GreenhouseType.YEAR_ROUND:
         return climate.t_design_winter_c
+    if greenhouse_type == GreenhouseType.NURSERY:
+        return _NURSERY_T_DESIGN_C
     return _SEASONAL_T_DESIGN_C
 
 
 def _heating_period_days(greenhouse_type: GreenhouseType, climate: ClimateData) -> int:
     if greenhouse_type == GreenhouseType.YEAR_ROUND:
         return climate.heating_period_days
+    if greenhouse_type == GreenhouseType.NURSERY:
+        # Nursery runs late winter → early summer ≈ 100 days
+        return 100
     # Seasonal heating mainly in spring shoulders ≈ 60 days
     return 60
 

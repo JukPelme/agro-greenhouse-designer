@@ -30,9 +30,13 @@ def compute_water_demand(
     annual_m3 = daily_m3 * 300
 
     # СП 107.13330 п. 6.14:
-    #   теплицы — категория надёжности не ниже II
+    #   теплицы year-round — категория надёжности не ниже II
     #   парники (sезонные) — допускается III
-    reliability = 2 if greenhouse_type != GreenhouseType.SEASONAL else 3
+    #   рассадные — допускается III (промежуточный режим)
+    if greenhouse_type == GreenhouseType.YEAR_ROUND:
+        reliability = 2
+    else:
+        reliability = 3
 
     # СП 107.13330 п. 6.8: радиус зоны обслуживания одним поливным краном ≤45 м.
     # Считаем что краны размещаются по сетке такого радиуса.

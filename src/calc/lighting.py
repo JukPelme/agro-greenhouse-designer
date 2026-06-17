@@ -39,7 +39,7 @@ def compute_lighting(
     natural_dli = climate.solar_radiation_winter_mj_m2_day * _PAR_FACTOR * weighted_tau
 
     # Seasonal greenhouses run when daylight is sufficient — no supplemental.
-    if greenhouse_type != GreenhouseType.YEAR_ROUND:
+    if greenhouse_type == GreenhouseType.SEASONAL:
         return LightingResult(
             target_dli_mol_m2_day=target,
             natural_dli_winter_mol_m2_day=round(natural_dli, 1),
@@ -48,7 +48,12 @@ def compute_lighting(
             supplemental_kwh_year=0.0,
         )
 
-    deficit_dli = max(target - natural_dli, 0)
+    # Nurseries need supplemental for seedling emergence, but target DLI is
+    # lower (rassada doesn't need adult-crop levels).
+    effective_target = target * 0.6 if greenhouse_type == GreenhouseType.NURSERY else target
+
+    deficit_dli = max(effective_target - natural_dli, 0)
+    target = effective_target  # report the *applicable* target, not the adult-crop one
     if deficit_dli == 0:
         return LightingResult(
             target_dli_mol_m2_day=target,

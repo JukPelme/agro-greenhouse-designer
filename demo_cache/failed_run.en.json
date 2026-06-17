@@ -37,23 +37,23 @@
   "analyst_notes": "Target yield per plot area: 4000.0 kg/m²/year\n⚠ Target yield is very high — intensive technology required.",
   "design": {
     "variant_id": "failed_v1",
-    "rationale": "This design proposes two compact year-round glass greenhouse blocks (Block A and Block B) on a very constrained 25 × 20 m plot in the Novosibirsk region, targeting tomato trellis culture. Glass cladding is chosen to maximise light transmittance (τ ≈ 0.88), which is critical given the region's low winter solar radiation. Each block is a single-span (angar) layout because the plot width cannot accommodate multi-span block configurations while maintaining the mandatory 6 m inter-block clearance for year-round greenhouses per SP 107.13330 clause 4.4. Ridge height is set to 5.5 m as required for trellis tomato culture. It must be noted that the plot (500 m²) is physically unable to deliver 2 000 t/year of tomatoes under any greenhouse configuration — the agronomic carrying capacity of this site is many orders of magnitude below the stated target yield; the project brief contains a fundamental contradiction between plot size and yield target that cannot be resolved by layout changes alone.",
+    "rationale": "This is a year-round glass greenhouse complex designed for intensive tomato production (trellis culture) in the severe continental climate of the Novosibirsk region. Glass cladding is selected to maximise light transmittance (τ≈0.88), which is critical given the low winter solar radiation. The brief explicitly requires at least two separate blocks; however, the plot is extremely small (25 × 20 m) and must accommodate year-round greenhouses with a mandatory minimum 6 m clearance between blocks per SP 107.13330 clause 4.4. Two blocks are arranged along the 25 m plot length with a 6 m fire-and-access gap between them, leaving each block with the minimum viable footprint. Important engineering caveat: the clay soil with groundwater depth of only 0.5 m (frost-heaving conditions) requires a pile foundation with perimeter drainage and enhanced waterproofing. It must be honestly noted that the 500 m² plot is physically incapable of accommodating the target yield of 2 000 t/year — even with the most intensive technology, the available growing area yields a small fraction of that figure; this constraint (ENG.5) cannot be resolved by design choices alone and must be escalated to the client for site re-selection or yield target revision.",
     "blocks": [
       {
         "name": "Block A",
-        "length_m": 6.0,
-        "width_m": 6.0,
+        "length_m": 12.0,
+        "width_m": 9.0,
         "ridge_height_m": 5.5,
         "eave_height_m": 2.4,
         "covering": "glass",
         "light_transmittance": 0.88,
-        "layout": "angar",
+        "layout": "block",
         "span_count": 1,
-        "span_width_m": 6.0,
+        "span_width_m": 9.0,
         "roof_shape": "straight",
         "roof_slope_pct": 45.0,
         "glass_thickness_mm": 4.0,
-        "opaque_share_pct": 15.0,
+        "opaque_share_pct": 14.0,
         "steel_profile_thickness_mm": 1.5,
         "glazing_fastener_thickness_mm": 0.6,
         "slenderness_ratio": 150.0,
@@ -62,19 +62,19 @@
       },
       {
         "name": "Block B",
-        "length_m": 6.0,
-        "width_m": 6.0,
+        "length_m": 12.0,
+        "width_m": 9.0,
         "ridge_height_m": 5.5,
         "eave_height_m": 2.4,
         "covering": "glass",
         "light_transmittance": 0.88,
-        "layout": "angar",
+        "layout": "block",
         "span_count": 1,
-        "span_width_m": 6.0,
+        "span_width_m": 9.0,
         "roof_shape": "straight",
         "roof_slope_pct": 45.0,
         "glass_thickness_mm": 4.0,
-        "opaque_share_pct": 15.0,
+        "opaque_share_pct": 14.0,
         "steel_profile_thickness_mm": 1.5,
         "glazing_fastener_thickness_mm": 0.6,
         "slenderness_ratio": 150.0,
@@ -85,23 +85,23 @@
     "aux_zones": [
       {
         "name": "Boiler house",
-        "area_m2": 12.0,
+        "area_m2": 16.0,
         "purpose": "Heating plant and utility room"
       },
       {
-        "name": "Tool and fertiliser storage",
-        "area_m2": 8.0,
-        "purpose": "Storage for tools, agrochemicals and fertilisers"
-      },
-      {
-        "name": "Packaging and sorting area",
-        "area_m2": 8.0,
-        "purpose": "Post-harvest packaging and product sorting"
+        "name": "Storage",
+        "area_m2": 12.0,
+        "purpose": "Storage for tools, fertilisers and consumables"
       },
       {
         "name": "Staff facilities",
-        "area_m2": 7.0,
-        "purpose": "Changing rooms, sanitary facilities and rest room for personnel"
+        "area_m2": 8.0,
+        "purpose": "Changing rooms and sanitary facilities for personnel"
+      },
+      {
+        "name": "Nutrient mixing room",
+        "area_m2": 9.0,
+        "purpose": "Nutrient solution preparation and dosing pumps"
       }
     ],
     "estimated_footprint_m2": 500.0,
@@ -109,18 +109,18 @@
     "foundation_above_soil_m": 0.4,
     "fence_height_m": 1.8,
     "block_spacing_m": 6.0,
-    "aux_share_pct": 7.000000000000001,
+    "aux_share_pct": 9.0,
     "min_block_spacing_m": 6.0
   },
   "engineering": {
     "heat": {
       "design_temp_diff_c": 55.0,
-      "envelope_area_m2": 198.0,
+      "envelope_area_m2": 450.0,
       "overall_heat_transfer_coef_w_m2k": 6.4,
-      "transmission_loss_kw": 69.7,
-      "infiltration_loss_kw": 13.9,
-      "total_peak_load_kw": 83.6,
-      "annual_heat_demand_mwh": 221.7,
+      "transmission_loss_kw": 158.4,
+      "infiltration_loss_kw": 31.7,
+      "total_peak_load_kw": 190.1,
+      "annual_heat_demand_mwh": 504.0,
       "supply_temp_c": 95.0,
       "share_to_lower_zone_pct": 45.0,
       "warm_air_share_pct": 42.0,
@@ -128,9 +128,9 @@
       "subsoil_heat_depth_m": 0.45
     },
     "water": {
-      "daily_demand_m3": 0.32,
-      "peak_hourly_m3": 0.04,
-      "annual_demand_m3": 97.0,
+      "daily_demand_m3": 0.97,
+      "peak_hourly_m3": 0.12,
+      "annual_demand_m3": 292.0,
       "irrigation_method": "Капельное (по умолчанию)",
       "irrigation_method_key": "irrigation_drip_default",
       "reliability_category": 2,
@@ -144,18 +144,18 @@
       "natural_dli_winter_mol_m2_day": 2.6,
       "supplemental_required": true,
       "installed_lamp_power_w_m2": 266.2,
-      "supplemental_kwh_year": 69612.0,
+      "supplemental_kwh_year": 208837.0,
       "aisle_floor_illuminance_lx": 8.0
     },
     "ventilation": {
       "summer_air_changes_per_hour": 60.0,
-      "required_vent_opening_pct_of_floor": 41.2,
+      "required_vent_opening_pct_of_floor": 41.7,
       "forced_vent_required": false,
-      "opening_share_of_envelope_pct": 15.0
+      "opening_share_of_envelope_pct": 20.0
     },
     "loads": {
-      "snow_load_total_kn": 278.0,
-      "wind_load_total_kn": 28.0,
+      "snow_load_total_kn": 835.0,
+      "wind_load_total_kn": 48.0,
       "notes": "",
       "snow_overload_factor": 1.4,
       "wind_q10_factor": 1.0,
@@ -181,16 +181,16 @@
         "rule_id": "ENG.5-yield-feasibility",
         "severity": "error",
         "message": "Площадь выращивания × норма культуры должна покрывать минимум 90% целевой урожайности из ТЗ. Иначе участок физически не вмещает заявленный объём продукции.",
-        "actual_value": "вмещает ~4 т/год (tomato @ 50.0 кг/м² × 72 м²)",
+        "actual_value": "вмещает ~11 т/год (tomato @ 50.0 кг/м² × 216 м²)",
         "required_value": ">= 1800 т/год (90% от ТЗ 2000.0 т)",
         "sp_citation": "Инженерная проверка (не из СП): достижимость целевой урожайности"
       }
     ],
-    "rules_checked": 35
+    "rules_checked": 36
   },
   "iteration": 3,
   "max_iterations": 3,
-  "report_markdown": "# Pre-design solution: Тестовый отказ системы\n\n**Region:** Новосибирская область\n**Greenhouse type:** year-round\n**Crop:** tomato\n**Target yield:** 2000.0 t/year\n**Generated:** 2026-06-17 05:46\n\n---\n\n## 1. Site inputs and analysis\n\nTarget yield per plot area: 4000.0 kg/m²/year\n⚠ Target yield is very high — intensive technology required.\n\n**Climate parameters (per Russian SP 131.13330):**\n\n| Parameter | Value |\n| --- | --- |\n| Design winter temperature (t5) | -37.0 °C |\n| Design summer temperature | 25.0 °C |\n| Heating degree-days | 6076.0 |\n| Heating period | 227 days |\n| Snow load | 2.4 kPa |\n| Wind load | 0.3 kPa |\n| Solar radiation (winter) | 1.5 MJ/m²/day |\n\n---\n\n## 2. Design solution (variant failed_v1)\n\n**Rationale:** This design proposes two compact year-round glass greenhouse blocks (Block A and Block B) on a very constrained 25 × 20 m plot in the Novosibirsk region, targeting tomato trellis culture. Glass cladding is chosen to maximise light transmittance (τ ≈ 0.88), which is critical given the region's low winter solar radiation. Each block is a single-span (angar) layout because the plot width cannot accommodate multi-span block configurations while maintaining the mandatory 6 m inter-block clearance for year-round greenhouses per SP 107.13330 clause 4.4. Ridge height is set to 5.5 m as required for trellis tomato culture. It must be noted that the plot (500 m²) is physically unable to deliver 2 000 t/year of tomatoes under any greenhouse configuration — the agronomic carrying capacity of this site is many orders of magnitude below the stated target yield; the project brief contains a fundamental contradiction between plot size and yield target that cannot be resolved by layout changes alone.\n\n**Total growing area:** 72 m²\n**Complex footprint (with auxiliary):** 500.0 m²\n\n### Greenhouse blocks\n\n- **Block A** — 6.0 × 6.0 m (area 36 m²)\n  - Heights: eave 2.4 m, ridge 5.5 m\n  - Layout: angar (single-span), 1 spans of 6.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 15.0%\n- **Block B** — 6.0 × 6.0 m (area 36 m²)\n  - Heights: eave 2.4 m, ridge 5.5 m\n  - Layout: angar (single-span), 1 spans of 6.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 15.0%\n\n### Complex structural parameters\n\n| Parameter | Value | SP Clause |\n| --- | --- | --- |\n| Plinth height | 0.4 m | 5.8 |\n| Foundation rise above soil | 0.4 m | 5.9 |\n| Territory fence height | 1.8 m | 4.16 |\n\n### Auxiliary zones\n\n- **Boiler house** — 12.0 m² (Heating plant and utility room)\n- **Tool and fertiliser storage** — 8.0 m² (Storage for tools, agrochemicals and fertilisers)\n- **Packaging and sorting area** — 8.0 m² (Post-harvest packaging and product sorting)\n- **Staff facilities** — 7.0 m² (Changing rooms, sanitary facilities and rest room for personnel)\n\n---\n\n## 3. Engineering calculations\n\n### 3.1. Heat supply\n\n![Heat losses and peak load](charts/failed_v1/energy_balance.png)\n\n- Design temperature difference: **55.0 °C**\n- Envelope area: **198.0 m²**\n- Overall heat transfer coefficient U: **6.4 W/(m²·K)**\n- Transmission losses: **69.7 kW**\n- Infiltration losses: **13.9 kW**\n- **Peak heating load: 83.6 kW**\n- Annual heat demand: **221.7 MWh**\n- Coolant temperature: **95.0 °C** _(SP 7.9 ≤150)_\n- Lower-zone heat share: **45.0%** _(SP 7.13 ≥40)_\n\n### 3.2. Water supply\n\n![Water demand](charts/failed_v1/water_demand.png)\n\n- Daily demand: **0.32 m³/day**\n- Peak hourly: **0.04 m³/h**\n- Annual: **97 m³/year**\n- Irrigation method: Drip (default)\n- Reliability category: **II** _(SP 6.14)_\n- Hose service radius: **40.0 m** _(SP 6.8 ≤45)_\n\n### 3.3. Lighting and supplemental\n\n![Light balance](charts/failed_v1/light_balance.png)\n\n- Target DLI: **22.0 mol/m²/day**\n- Natural winter DLI: **2.6 mol/m²/day**\n- **Supplemental lighting required**: installed 266.2 W/m², consumption 69612 kWh/year\n- Aisle floor illuminance: 8.0 lx _(SP 8.3 ≤10)_\n\n### 3.4. Annual energy consumption\n\n![Annual energy breakdown](charts/failed_v1/annual_energy.png)\n\n### 3.5. Ventilation\n\n- Summer target air changes per hour: **60.0 h⁻¹**\n- Vent opening share of envelope: **15.0%** _(SP 7.18 ≥20, ≥10 north of 60°N)_\n- Vent opening share of floor: 41.2%\n- Forced ventilation: **not required**\n\n### 3.6. Structural loads\n\n- Snow load on roof: **278.0 kN** (γ=1.4)\n- Wind load on walls: **28.0 kN** (q₁₀=1.0, q₂=0.6)\n- Trellis load: 150.0 N/m² (γ=1.3)\n\n_Overload factors and normative values per SP 107.13330 clause 5.14._\n\n### 3.7. Geotechnical conditions and foundation\n\n- Foundation soil: **clay**\n- Groundwater depth: **0.5 m**\n- Recommended foundation type: **pile**\n- Minimum embedment depth: **3.0 m**\n- Perimeter drainage: **required**\n- Waterproofing grade: **enhanced**\n\n> Clay with high groundwater table — frost-heaving soil. Pile foundation embedded below the freezing depth; enhanced waterproofing and mandatory perimeter drainage required.\n\n_Preliminary recommendations. A proper engineering-geological survey per SP 47.13330 is required for working documentation._\n\n---\n\n## 4. SP 107.13330 compliance check\n\nRules checked: **35**\n\n### ERROR — ENG.5-yield-feasibility\n\nПлощадь выращивания × норма культуры должна покрывать минимум 90% целевой урожайности из ТЗ. Иначе участок физически не вмещает заявленный объём продукции.\n\n- Actual: `вмещает ~4 т/год (tomato @ 50.0 кг/м² × 72 м²)`\n- Required: `>= 1800 т/год (90% от ТЗ 2000.0 т)`\n- **Source** _(SP 107.13330, original Russian text)_: Инженерная проверка (не из СП): достижимость целевой урожайности\n\n\n---\n\n_Generated by agro-greenhouse-designer. Outputs are pre-design estimates and require validation by a qualified engineer before detailed documentation._",
+  "report_markdown": "# Pre-design solution: Тестовый отказ системы\n\n**Region:** Новосибирская область\n**Greenhouse type:** year-round\n**Crop:** tomato\n**Target yield:** 2000.0 t/year\n**Generated:** 2026-06-17 06:36\n\n---\n\n## 1. Site inputs and analysis\n\nTarget yield per plot area: 4000.0 kg/m²/year\n⚠ Target yield is very high — intensive technology required.\n\n**Climate parameters (per Russian SP 131.13330):**\n\n| Parameter | Value |\n| --- | --- |\n| Design winter temperature (t5) | -37.0 °C |\n| Design summer temperature | 25.0 °C |\n| Heating degree-days | 6076.0 |\n| Heating period | 227 days |\n| Snow load | 2.4 kPa |\n| Wind load | 0.3 kPa |\n| Solar radiation (winter) | 1.5 MJ/m²/day |\n\n---\n\n## 2. Design solution (variant failed_v1)\n\n**Rationale:** This is a year-round glass greenhouse complex designed for intensive tomato production (trellis culture) in the severe continental climate of the Novosibirsk region. Glass cladding is selected to maximise light transmittance (τ≈0.88), which is critical given the low winter solar radiation. The brief explicitly requires at least two separate blocks; however, the plot is extremely small (25 × 20 m) and must accommodate year-round greenhouses with a mandatory minimum 6 m clearance between blocks per SP 107.13330 clause 4.4. Two blocks are arranged along the 25 m plot length with a 6 m fire-and-access gap between them, leaving each block with the minimum viable footprint. Important engineering caveat: the clay soil with groundwater depth of only 0.5 m (frost-heaving conditions) requires a pile foundation with perimeter drainage and enhanced waterproofing. It must be honestly noted that the 500 m² plot is physically incapable of accommodating the target yield of 2 000 t/year — even with the most intensive technology, the available growing area yields a small fraction of that figure; this constraint (ENG.5) cannot be resolved by design choices alone and must be escalated to the client for site re-selection or yield target revision.\n\n**Total growing area:** 216 m²\n**Complex footprint (with auxiliary):** 500.0 m²\n\n### Greenhouse blocks\n\n- **Block A** — 12.0 × 9.0 m (area 108 m²)\n  - Heights: eave 2.4 m, ridge 5.5 m\n  - Layout: block (multi-span), 1 spans of 9.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 14.0%\n- **Block B** — 12.0 × 9.0 m (area 108 m²)\n  - Heights: eave 2.4 m, ridge 5.5 m\n  - Layout: block (multi-span), 1 spans of 9.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 14.0%\n\n### Complex structural parameters\n\n| Parameter | Value | SP Clause |\n| --- | --- | --- |\n| Plinth height | 0.4 m | 5.8 |\n| Foundation rise above soil | 0.4 m | 5.9 |\n| Territory fence height | 1.8 m | 4.16 |\n\n### Auxiliary zones\n\n- **Boiler house** — 16.0 m² (Heating plant and utility room)\n- **Storage** — 12.0 m² (Storage for tools, fertilisers and consumables)\n- **Staff facilities** — 8.0 m² (Changing rooms and sanitary facilities for personnel)\n- **Nutrient mixing room** — 9.0 m² (Nutrient solution preparation and dosing pumps)\n\n---\n\n## 3. Engineering calculations\n\n### 3.1. Heat supply\n\n![Heat losses and peak load](charts/failed_v1/energy_balance.png)\n\n- Design temperature difference: **55.0 °C**\n- Envelope area: **450.0 m²**\n- Overall heat transfer coefficient U: **6.4 W/(m²·K)**\n- Transmission losses: **158.4 kW**\n- Infiltration losses: **31.7 kW**\n- **Peak heating load: 190.1 kW**\n- Annual heat demand: **504.0 MWh**\n- Coolant temperature: **95.0 °C** _(SP 7.9 ≤150)_\n- Lower-zone heat share: **45.0%** _(SP 7.13 ≥40)_\n\n### 3.2. Water supply\n\n![Water demand](charts/failed_v1/water_demand.png)\n\n- Daily demand: **0.97 m³/day**\n- Peak hourly: **0.12 m³/h**\n- Annual: **292 m³/year**\n- Irrigation method: Drip (default)\n- Reliability category: **II** _(SP 6.14)_\n- Hose service radius: **40.0 m** _(SP 6.8 ≤45)_\n\n### 3.3. Lighting and supplemental\n\n![Light balance](charts/failed_v1/light_balance.png)\n\n- Target DLI: **22.0 mol/m²/day**\n- Natural winter DLI: **2.6 mol/m²/day**\n- **Supplemental lighting required**: installed 266.2 W/m², consumption 208837 kWh/year\n- Aisle floor illuminance: 8.0 lx _(SP 8.3 ≤10)_\n\n### 3.4. Annual energy consumption\n\n![Annual energy breakdown](charts/failed_v1/annual_energy.png)\n\n### 3.5. Ventilation\n\n- Summer target air changes per hour: **60.0 h⁻¹**\n- Vent opening share of envelope: **20.0%** _(SP 7.18 ≥20, ≥10 north of 60°N)_\n- Vent opening share of floor: 41.7%\n- Forced ventilation: **not required**\n\n### 3.6. Structural loads\n\n- Snow load on roof: **835.0 kN** (γ=1.4)\n- Wind load on walls: **48.0 kN** (q₁₀=1.0, q₂=0.6)\n- Trellis load: 150.0 N/m² (γ=1.3)\n\n_Overload factors and normative values per SP 107.13330 clause 5.14._\n\n### 3.7. Geotechnical conditions and foundation\n\n- Foundation soil: **clay**\n- Groundwater depth: **0.5 m**\n- Recommended foundation type: **pile**\n- Minimum embedment depth: **3.0 m**\n- Perimeter drainage: **required**\n- Waterproofing grade: **enhanced**\n\n> Clay with high groundwater table — frost-heaving soil. Pile foundation embedded below the freezing depth; enhanced waterproofing and mandatory perimeter drainage required.\n\n_Preliminary recommendations. A proper engineering-geological survey per SP 47.13330 is required for working documentation._\n\n---\n\n## 4. SP 107.13330 compliance check\n\nRules checked: **36**\n\n### ERROR — ENG.5-yield-feasibility\n\nПлощадь выращивания × норма культуры должна покрывать минимум 90% целевой урожайности из ТЗ. Иначе участок физически не вмещает заявленный объём продукции.\n\n- Actual: `вмещает ~11 т/год (tomato @ 50.0 кг/м² × 216 м²)`\n- Required: `>= 1800 т/год (90% от ТЗ 2000.0 т)`\n- **Source** _(SP 107.13330, original Russian text)_: Инженерная проверка (не из СП): достижимость целевой урожайности\n\n\n---\n\n_Generated by agro-greenhouse-designer. Outputs are pre-design estimates and require validation by a qualified engineer before detailed documentation._",
   "report_pdf_path": "docs/report_failed_v1.pdf",
   "errors": []
 }
