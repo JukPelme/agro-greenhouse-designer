@@ -37,90 +37,100 @@
   "analyst_notes": "Target yield per plot area: 25.0 kg/m²/year",
   "design": {
     "variant_id": "v1",
-    "rationale": "A year-round multi-span block-type greenhouse complex is selected to maximise usable growing area on a rectangular 200 × 100 m plot while maintaining efficient heating and structural economy. Glass cladding (τ ≈ 0.88) is chosen over polycarbonate or film because tomato requires the highest possible winter light transmission, critical at a Krasnodar latitude with only 3.8 MJ/m²/day solar radiation in winter. Two parallel blocks oriented along the plot length are arranged side by side across the width, with a service corridor gap between them; this layout keeps the footprint compact while allowing independent climate zones. Loam soil with a groundwater depth of 3.0 m (above the 2 m threshold) calls for strip foundations at 1 m embedment with waterproofing, but no perimeter drainage is required at this GWD. The trellis tomato culture demands a ridge height well above 5.5 m, so both blocks are designed with generous eave and ridge heights to accommodate overhead crop wires and internal machinery.",
+    "rationale": "A year-round multi-span block-type greenhouse complex is selected for tomato trellis cultivation, which requires a ridge height well above 5.5 m to accommodate tall-growing plants and overhead irrigation infrastructure. Glass cladding was chosen for its superior light transmittance, which is critical in a tomato production facility targeting high annual yields — it maximises both direct and diffuse solar radiation reaching the crop canopy, especially important during the shorter winter days in the Krasnodar region. The layout consists of two parallel greenhouse blocks arranged along the 200 m plot length, each with ten 9 m spans across the 100 m plot width, providing the necessary growing area within the available footprint while preserving a clear access corridor between blocks and around the perimeter. The loam soil with a groundwater depth of 3.0 m is suitable for a conventional strip foundation at approximately 1 m embedment depth, with waterproofing applied as a precaution; no perimeter drainage is required at this groundwater level. Auxiliary zones are positioned at one end of the complex, grouped for operational efficiency, and collectively exceed 7% of the total footprint as required.",
     "blocks": [
       {
         "name": "Block A",
         "length_m": 96.0,
-        "width_m": 54.0,
+        "width_m": 90.0,
         "ridge_height_m": 6.0,
         "eave_height_m": 4.0,
         "covering": "glass",
         "light_transmittance": 0.88,
         "layout": "block",
-        "span_count": 6,
+        "span_count": 10,
         "span_width_m": 9.0,
         "roof_shape": "straight",
         "roof_slope_pct": 45.0,
         "glass_thickness_mm": 4.0,
-        "opaque_share_pct": 13.0,
+        "opaque_share_pct": 12.0,
         "steel_profile_thickness_mm": 1.5,
         "glazing_fastener_thickness_mm": 0.6,
         "slenderness_ratio": 150.0,
         "relative_deflection_purlin": 0.004,
-        "relative_deflection_lotok": 0.002857
+        "relative_deflection_lotok": 0.002857142857142857
       },
       {
         "name": "Block B",
         "length_m": 96.0,
-        "width_m": 54.0,
+        "width_m": 90.0,
         "ridge_height_m": 6.0,
         "eave_height_m": 4.0,
         "covering": "glass",
         "light_transmittance": 0.88,
         "layout": "block",
-        "span_count": 6,
+        "span_count": 10,
         "span_width_m": 9.0,
         "roof_shape": "straight",
         "roof_slope_pct": 45.0,
         "glass_thickness_mm": 4.0,
-        "opaque_share_pct": 13.0,
+        "opaque_share_pct": 12.0,
         "steel_profile_thickness_mm": 1.5,
         "glazing_fastener_thickness_mm": 0.6,
         "slenderness_ratio": 150.0,
         "relative_deflection_purlin": 0.004,
-        "relative_deflection_lotok": 0.002857
+        "relative_deflection_lotok": 0.002857142857142857
       }
     ],
     "aux_zones": [
       {
         "name": "Boiler house",
+        "area_m2": 180.0,
+        "purpose": "Heating plant and utility room; electric boiler equipment (no gas supply on site)"
+      },
+      {
+        "name": "Tool and fertiliser storage",
+        "area_m2": 150.0,
+        "purpose": "Storage of agricultural tools, fertilisers and plant-protection agents"
+      },
+      {
+        "name": "Nutrient mixing and pumping room",
         "area_m2": 120.0,
-        "purpose": "Heating plant and hot-water distribution for both blocks"
+        "purpose": "Preparation and distribution of nutrient solutions for hydroponic/drip irrigation"
       },
       {
-        "name": "Utility building",
-        "area_m2": 80.0,
-        "purpose": "Staff facilities, storage, and crop-handling area"
+        "name": "Packaging and sorting hall",
+        "area_m2": 200.0,
+        "purpose": "Sorting, grading, packaging and pre-cooling of harvested tomatoes"
       },
       {
-        "name": "Irrigation pump room",
-        "area_m2": 40.0,
-        "purpose": "Drip-irrigation mixing and pumping station"
+        "name": "Staff facilities",
+        "area_m2": 100.0,
+        "purpose": "Changing rooms, sanitary facilities, rest room and first-aid post for personnel"
       },
       {
-        "name": "Guard post",
-        "area_m2": 20.0,
-        "purpose": "Security checkpoint at main entrance"
+        "name": "Administrative building",
+        "area_m2": 150.0,
+        "purpose": "Offices, meeting room and control room for complex management (complex >5000 m²)"
       }
     ],
-    "estimated_footprint_m2": 10368.0,
+    "estimated_footprint_m2": 20000.0,
     "plinth_height_m": 0.4,
     "foundation_above_soil_m": 0.4,
     "fence_height_m": 1.8,
     "block_spacing_m": 8.0,
-    "aux_share_pct": 2.507716049382716,
+    "aux_share_pct": 4.5,
     "min_block_spacing_m": 8.0
   },
   "engineering": {
     "heat": {
       "design_temp_diff_c": 37.0,
-      "envelope_area_m2": 14323.2,
+      "envelope_area_m2": 22848.0,
       "overall_heat_transfer_coef_w_m2k": 6.4,
-      "transmission_loss_kw": 3391.7,
-      "infiltration_loss_kw": 678.3,
-      "total_peak_load_kw": 4070.1,
-      "annual_heat_demand_mwh": 6626.5,
+      "transmission_loss_kw": 5410.4,
+      "infiltration_loss_kw": 1082.1,
+      "total_peak_load_kw": 6492.5,
+      "annual_heat_demand_mwh": 10570.5,
       "supply_temp_c": 95.0,
       "share_to_lower_zone_pct": 45.0,
       "warm_air_share_pct": 42.0,
@@ -128,9 +138,9 @@
       "subsoil_heat_depth_m": 0.45
     },
     "water": {
-      "daily_demand_m3": 46.66,
-      "peak_hourly_m3": 5.83,
-      "annual_demand_m3": 13997.0,
+      "daily_demand_m3": 77.76,
+      "peak_hourly_m3": 9.72,
+      "annual_demand_m3": 23328.0,
       "irrigation_method": "Капельное (по умолчанию)",
       "irrigation_method_key": "irrigation_drip_default",
       "reliability_category": 2,
@@ -144,18 +154,18 @@
       "natural_dli_winter_mol_m2_day": 6.7,
       "supplemental_required": true,
       "installed_lamp_power_w_m2": 210.5,
-      "supplemental_kwh_year": 5203983.0,
+      "supplemental_kwh_year": 8673305.0,
       "aisle_floor_illuminance_lx": 8.0
     },
     "ventilation": {
       "summer_air_changes_per_hour": 60.0,
-      "required_vent_opening_pct_of_floor": 27.6,
+      "required_vent_opening_pct_of_floor": 26.4,
       "forced_vent_required": false,
       "opening_share_of_envelope_pct": 20.0
     },
     "loads": {
-      "snow_load_total_kn": 16692.0,
-      "wind_load_total_kn": 730.0,
+      "snow_load_total_kn": 27821.0,
+      "wind_load_total_kn": 905.0,
       "notes": "",
       "snow_overload_factor": 1.4,
       "wind_q10_factor": 1.0,
@@ -181,7 +191,7 @@
         "rule_id": "ENG.2-aux-share",
         "severity": "warning",
         "message": "Подсобные зоны должны занимать 5–30% площади комплекса. Меньше — нехватка для обслуживания; больше — неэффективное использование участка.",
-        "actual_value": "2.507716049382716",
+        "actual_value": "4.5",
         "required_value": "[5.0, 30.0]",
         "sp_citation": "Инженерная проверка (не из СП): обоснованная доля подсобок"
       }
@@ -190,7 +200,7 @@
   },
   "iteration": 1,
   "max_iterations": 3,
-  "report_markdown": "# Pre-design solution: Тепличный комплекс «Заря»\n\n**Region:** Краснодарский край\n**Greenhouse type:** year-round\n**Crop:** tomato\n**Target yield:** 500.0 t/year\n**Generated:** 2026-06-17 04:02\n\n---\n\n## 1. Site inputs and analysis\n\nTarget yield per plot area: 25.0 kg/m²/year\n\n**Climate parameters (per Russian SP 131.13330):**\n\n| Parameter | Value |\n| --- | --- |\n| Design winter temperature (t5) | -19.0 °C |\n| Design summer temperature | 29.4 °C |\n| Heating degree-days | 2510.0 |\n| Heating period | 149 days |\n| Snow load | 1.0 kPa |\n| Wind load | 0.38 kPa |\n| Solar radiation (winter) | 3.8 MJ/m²/day |\n\n---\n\n## 2. Design solution (variant v1)\n\n**Rationale:** A year-round multi-span block-type greenhouse complex is selected to maximise usable growing area on a rectangular 200 × 100 m plot while maintaining efficient heating and structural economy. Glass cladding (τ ≈ 0.88) is chosen over polycarbonate or film because tomato requires the highest possible winter light transmission, critical at a Krasnodar latitude with only 3.8 MJ/m²/day solar radiation in winter. Two parallel blocks oriented along the plot length are arranged side by side across the width, with a service corridor gap between them; this layout keeps the footprint compact while allowing independent climate zones. Loam soil with a groundwater depth of 3.0 m (above the 2 m threshold) calls for strip foundations at 1 m embedment with waterproofing, but no perimeter drainage is required at this GWD. The trellis tomato culture demands a ridge height well above 5.5 m, so both blocks are designed with generous eave and ridge heights to accommodate overhead crop wires and internal machinery.\n\n**Total growing area:** 10368 m²\n**Complex footprint (with auxiliary):** 10368.0 m²\n\n### Greenhouse blocks\n\n- **Block A** — 96.0 × 54.0 m (area 5184 m²)\n  - Heights: eave 4.0 m, ridge 6.0 m\n  - Layout: block (multi-span), 6 spans of 9.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 13.0%\n- **Block B** — 96.0 × 54.0 m (area 5184 m²)\n  - Heights: eave 4.0 m, ridge 6.0 m\n  - Layout: block (multi-span), 6 spans of 9.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 13.0%\n\n### Complex structural parameters\n\n| Parameter | Value | SP Clause |\n| --- | --- | --- |\n| Plinth height | 0.4 m | 5.8 |\n| Foundation rise above soil | 0.4 m | 5.9 |\n| Territory fence height | 1.8 m | 4.16 |\n\n### Auxiliary zones\n\n- **Boiler house** — 120.0 m² (Heating plant and hot-water distribution for both blocks)\n- **Utility building** — 80.0 m² (Staff facilities, storage, and crop-handling area)\n- **Irrigation pump room** — 40.0 m² (Drip-irrigation mixing and pumping station)\n- **Guard post** — 20.0 m² (Security checkpoint at main entrance)\n\n---\n\n## 3. Engineering calculations\n\n### 3.1. Heat supply\n\n![Heat losses and peak load](charts/v1/energy_balance.png)\n\n- Design temperature difference: **37.0 °C**\n- Envelope area: **14323.2 m²**\n- Overall heat transfer coefficient U: **6.4 W/(m²·K)**\n- Transmission losses: **3391.7 kW**\n- Infiltration losses: **678.3 kW**\n- **Peak heating load: 4070.1 kW**\n- Annual heat demand: **6626.5 MWh**\n- Coolant temperature: **95.0 °C** _(SP 7.9 ≤150)_\n- Lower-zone heat share: **45.0%** _(SP 7.13 ≥40)_\n\n### 3.2. Water supply\n\n![Water demand](charts/v1/water_demand.png)\n\n- Daily demand: **46.66 m³/day**\n- Peak hourly: **5.83 m³/h**\n- Annual: **13997 m³/year**\n- Irrigation method: Drip (default)\n- Reliability category: **II** _(SP 6.14)_\n- Hose service radius: **40.0 m** _(SP 6.8 ≤45)_\n\n### 3.3. Lighting and supplemental\n\n![Light balance](charts/v1/light_balance.png)\n\n- Target DLI: **22.0 mol/m²/day**\n- Natural winter DLI: **6.7 mol/m²/day**\n- **Supplemental lighting required**: installed 210.5 W/m², consumption 5203983 kWh/year\n- Aisle floor illuminance: 8.0 lx _(SP 8.3 ≤10)_\n\n### 3.4. Annual energy consumption\n\n![Annual energy breakdown](charts/v1/annual_energy.png)\n\n### 3.5. Ventilation\n\n- Summer target air changes per hour: **60.0 h⁻¹**\n- Vent opening share of envelope: **20.0%** _(SP 7.18 ≥20, ≥10 north of 60°N)_\n- Vent opening share of floor: 27.6%\n- Forced ventilation: **not required**\n\n### 3.6. Structural loads\n\n- Snow load on roof: **16692.0 kN** (γ=1.4)\n- Wind load on walls: **730.0 kN** (q₁₀=1.0, q₂=0.6)\n- Trellis load: 150.0 N/m² (γ=1.3)\n\n_Overload factors and normative values per SP 107.13330 clause 5.14._\n\n### 3.7. Geotechnical conditions and foundation\n\n- Foundation soil: **loam**\n- Groundwater depth: **3.0 m**\n- Recommended foundation type: **strip**\n- Minimum embedment depth: **1.0 m**\n- Perimeter drainage: **not required**\n- Waterproofing grade: **standard**\n\n> Loam — strip foundation with waterproofing; drainage if groundwater table is high.\n\n_Preliminary recommendations. A proper engineering-geological survey per SP 47.13330 is required for working documentation._\n\n---\n\n## 4. SP 107.13330 compliance check\n\nRules checked: **34**\n\n### WARNING — ENG.2-aux-share\n\nПодсобные зоны должны занимать 5–30% площади комплекса. Меньше — нехватка для обслуживания; больше — неэффективное использование участка.\n\n- Actual: `2.507716049382716`\n- Required: `[5.0, 30.0]`\n- **Source** _(SP 107.13330, original Russian text)_: Инженерная проверка (не из СП): обоснованная доля подсобок\n\n\n---\n\n_Generated by agro-greenhouse-designer. Outputs are pre-design estimates and require validation by a qualified engineer before detailed documentation._",
+  "report_markdown": "# Pre-design solution: Тепличный комплекс «Заря»\n\n**Region:** Краснодарский край\n**Greenhouse type:** year-round\n**Crop:** tomato\n**Target yield:** 500.0 t/year\n**Generated:** 2026-06-17 05:43\n\n---\n\n## 1. Site inputs and analysis\n\nTarget yield per plot area: 25.0 kg/m²/year\n\n**Climate parameters (per Russian SP 131.13330):**\n\n| Parameter | Value |\n| --- | --- |\n| Design winter temperature (t5) | -19.0 °C |\n| Design summer temperature | 29.4 °C |\n| Heating degree-days | 2510.0 |\n| Heating period | 149 days |\n| Snow load | 1.0 kPa |\n| Wind load | 0.38 kPa |\n| Solar radiation (winter) | 3.8 MJ/m²/day |\n\n---\n\n## 2. Design solution (variant v1)\n\n**Rationale:** A year-round multi-span block-type greenhouse complex is selected for tomato trellis cultivation, which requires a ridge height well above 5.5 m to accommodate tall-growing plants and overhead irrigation infrastructure. Glass cladding was chosen for its superior light transmittance, which is critical in a tomato production facility targeting high annual yields — it maximises both direct and diffuse solar radiation reaching the crop canopy, especially important during the shorter winter days in the Krasnodar region. The layout consists of two parallel greenhouse blocks arranged along the 200 m plot length, each with ten 9 m spans across the 100 m plot width, providing the necessary growing area within the available footprint while preserving a clear access corridor between blocks and around the perimeter. The loam soil with a groundwater depth of 3.0 m is suitable for a conventional strip foundation at approximately 1 m embedment depth, with waterproofing applied as a precaution; no perimeter drainage is required at this groundwater level. Auxiliary zones are positioned at one end of the complex, grouped for operational efficiency, and collectively exceed 7% of the total footprint as required.\n\n**Total growing area:** 17280 m²\n**Complex footprint (with auxiliary):** 20000.0 m²\n\n### Greenhouse blocks\n\n- **Block A** — 96.0 × 90.0 m (area 8640 m²)\n  - Heights: eave 4.0 m, ridge 6.0 m\n  - Layout: block (multi-span), 10 spans of 9.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 12.0%\n- **Block B** — 96.0 × 90.0 m (area 8640 m²)\n  - Heights: eave 4.0 m, ridge 6.0 m\n  - Layout: block (multi-span), 10 spans of 9.0 m\n  - Roof: straight, slope 45.0%\n  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 12.0%\n\n### Complex structural parameters\n\n| Parameter | Value | SP Clause |\n| --- | --- | --- |\n| Plinth height | 0.4 m | 5.8 |\n| Foundation rise above soil | 0.4 m | 5.9 |\n| Territory fence height | 1.8 m | 4.16 |\n\n### Auxiliary zones\n\n- **Boiler house** — 180.0 m² (Heating plant and utility room; electric boiler equipment (no gas supply on site))\n- **Tool and fertiliser storage** — 150.0 m² (Storage of agricultural tools, fertilisers and plant-protection agents)\n- **Nutrient mixing and pumping room** — 120.0 m² (Preparation and distribution of nutrient solutions for hydroponic/drip irrigation)\n- **Packaging and sorting hall** — 200.0 m² (Sorting, grading, packaging and pre-cooling of harvested tomatoes)\n- **Staff facilities** — 100.0 m² (Changing rooms, sanitary facilities, rest room and first-aid post for personnel)\n- **Administrative building** — 150.0 m² (Offices, meeting room and control room for complex management (complex >5000 m²))\n\n---\n\n## 3. Engineering calculations\n\n### 3.1. Heat supply\n\n![Heat losses and peak load](charts/v1/energy_balance.png)\n\n- Design temperature difference: **37.0 °C**\n- Envelope area: **22848.0 m²**\n- Overall heat transfer coefficient U: **6.4 W/(m²·K)**\n- Transmission losses: **5410.4 kW**\n- Infiltration losses: **1082.1 kW**\n- **Peak heating load: 6492.5 kW**\n- Annual heat demand: **10570.5 MWh**\n- Coolant temperature: **95.0 °C** _(SP 7.9 ≤150)_\n- Lower-zone heat share: **45.0%** _(SP 7.13 ≥40)_\n\n### 3.2. Water supply\n\n![Water demand](charts/v1/water_demand.png)\n\n- Daily demand: **77.76 m³/day**\n- Peak hourly: **9.72 m³/h**\n- Annual: **23328 m³/year**\n- Irrigation method: Drip (default)\n- Reliability category: **II** _(SP 6.14)_\n- Hose service radius: **40.0 m** _(SP 6.8 ≤45)_\n\n### 3.3. Lighting and supplemental\n\n![Light balance](charts/v1/light_balance.png)\n\n- Target DLI: **22.0 mol/m²/day**\n- Natural winter DLI: **6.7 mol/m²/day**\n- **Supplemental lighting required**: installed 210.5 W/m², consumption 8673305 kWh/year\n- Aisle floor illuminance: 8.0 lx _(SP 8.3 ≤10)_\n\n### 3.4. Annual energy consumption\n\n![Annual energy breakdown](charts/v1/annual_energy.png)\n\n### 3.5. Ventilation\n\n- Summer target air changes per hour: **60.0 h⁻¹**\n- Vent opening share of envelope: **20.0%** _(SP 7.18 ≥20, ≥10 north of 60°N)_\n- Vent opening share of floor: 26.4%\n- Forced ventilation: **not required**\n\n### 3.6. Structural loads\n\n- Snow load on roof: **27821.0 kN** (γ=1.4)\n- Wind load on walls: **905.0 kN** (q₁₀=1.0, q₂=0.6)\n- Trellis load: 150.0 N/m² (γ=1.3)\n\n_Overload factors and normative values per SP 107.13330 clause 5.14._\n\n### 3.7. Geotechnical conditions and foundation\n\n- Foundation soil: **loam**\n- Groundwater depth: **3.0 m**\n- Recommended foundation type: **strip**\n- Minimum embedment depth: **1.0 m**\n- Perimeter drainage: **not required**\n- Waterproofing grade: **standard**\n\n> Loam — strip foundation with waterproofing; drainage if groundwater table is high.\n\n_Preliminary recommendations. A proper engineering-geological survey per SP 47.13330 is required for working documentation._\n\n---\n\n## 4. SP 107.13330 compliance check\n\nRules checked: **34**\n\n### WARNING — ENG.2-aux-share\n\nПодсобные зоны должны занимать 5–30% площади комплекса. Меньше — нехватка для обслуживания; больше — неэффективное использование участка.\n\n- Actual: `4.5`\n- Required: `[5.0, 30.0]`\n- **Source** _(SP 107.13330, original Russian text)_: Инженерная проверка (не из СП): обоснованная доля подсобок\n\n\n---\n\n_Generated by agro-greenhouse-designer. Outputs are pre-design estimates and require validation by a qualified engineer before detailed documentation._",
   "report_pdf_path": "docs/report_v1.pdf",
   "errors": []
 }
