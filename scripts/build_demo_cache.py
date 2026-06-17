@@ -41,36 +41,32 @@ def main() -> None:
         notes="Стандартное портфолио-демо.",
     )
 
-    raw = graph.invoke({"brief": brief}, {"recursion_limit": 25})
-    state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
-
-    # Render both languages — Reporter is deterministic (no LLM), so we just
-    # re-invoke it with state.lang swapped instead of re-running the graph.
-    from src.agents.reporter import reporter_node
-
     out_dir = ROOT / "demo_cache"
     out_dir.mkdir(exist_ok=True)
     docs_dir = ROOT / "docs"
 
+    # Run the graph TWICE — once per language — so the Designer rationale (and
+    # everything Designer names like block titles, aux zones) lands in the
+    # target language. Cost: ~2× the tokens, but cached forever for the demo.
+    final_iters = None
+    final_issues = None
     for lang in ("ru", "en"):
-        state.lang = lang
-        result = reporter_node(state)
-        state.report_markdown = result["report_markdown"]
-        state.report_pdf_path = result.get("report_pdf_path")
+        raw = graph.invoke({"brief": brief, "lang": lang}, {"recursion_limit": 25})
+        state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
+        final_iters = state.iteration
+        final_issues = len(state.validation.issues)
 
         json_out = out_dir / f"default_run.{lang}.json"
         json_out.write_text(state.model_dump_json(indent=2, exclude={"messages"}), encoding="utf-8")
-
         md_out = docs_dir / f"example_report.{lang}.md"
         md_out.write_text(state.report_markdown, encoding="utf-8")
         print(f"  {lang}: {json_out.name} ({json_out.stat().st_size} B), report {len(state.report_markdown)} chars")
 
-    # Keep `default_run.json` as a back-compat alias for the Russian version.
     (out_dir / "default_run.json").write_text(
         (out_dir / "default_run.ru.json").read_text(encoding="utf-8"), encoding="utf-8"
     )
 
-    print(f"Validation issues: {len(state.validation.issues)}, iterations: {state.iteration}")
+    print(f"Validation issues: {final_issues}, iterations: {final_iters}")
 
 
 if __name__ == "__main__":

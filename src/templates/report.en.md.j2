@@ -1,8 +1,8 @@
 # Pre-design solution: {{ state.brief.project_name }}
 
 **Region:** {{ state.brief.site.region }}
-**Greenhouse type:** {{ state.brief.greenhouse_type.value }}
-**Crop:** {{ state.brief.target_crop.value }}
+**Greenhouse type:** {{ enum_label(state.brief.greenhouse_type.value, lang) }}
+**Crop:** {{ enum_label(state.brief.target_crop.value, lang) }}
 **Target yield:** {{ state.brief.target_annual_yield_t }} t/year
 **Generated:** {{ generated_at }}
 
@@ -38,9 +38,9 @@
 {% for b in state.design.blocks %}
 - **{{ b.name }}** — {{ b.length_m }} × {{ b.width_m }} m (area {{ "%.0f" | format(b.floor_area_m2) }} m²)
   - Heights: eave {{ b.eave_height_m }} m, ridge {{ b.ridge_height_m }} m
-  - Layout: {{ b.layout.value }}, {{ b.span_count }} spans of {{ b.span_width_m }} m
-  - Roof: {{ b.roof_shape.value }}, slope {{ b.roof_slope_pct }}%
-  - Covering: {{ b.covering.value }} (τ={{ b.light_transmittance }}){% if b.glass_thickness_mm %}, glass {{ b.glass_thickness_mm }} mm{% endif %}
+  - Layout: {{ enum_label(b.layout.value, lang) }}, {{ b.span_count }} spans of {{ b.span_width_m }} m
+  - Roof: {{ enum_label(b.roof_shape.value, lang) }}, slope {{ b.roof_slope_pct }}%
+  - Covering: {{ enum_label(b.covering.value, lang) }} (τ={{ b.light_transmittance }}){% if b.glass_thickness_mm %}, glass {{ b.glass_thickness_mm }} mm{% endif %}
   - Opaque structures share: {{ b.opaque_share_pct }}%
 {% endfor %}
 
@@ -91,7 +91,7 @@ _Not proposed._
 - Daily demand: **{{ state.engineering.water.daily_demand_m3 }} m³/day**
 - Peak hourly: **{{ state.engineering.water.peak_hourly_m3 }} m³/h**
 - Annual: **{{ "%.0f" | format(state.engineering.water.annual_demand_m3) }} m³/year**
-- Irrigation method: {{ state.engineering.water.irrigation_method }}
+- Irrigation method: {{ t(state.engineering.water.irrigation_method_key, lang) if state.engineering.water.irrigation_method_key else state.engineering.water.irrigation_method }}
 - Reliability category: **{% if state.engineering.water.reliability_category == 1 %}I{% elif state.engineering.water.reliability_category == 2 %}II{% else %}III{% endif %}** _(SP 6.14)_
 - Hose service radius: **{{ state.engineering.water.hose_service_radius_m }} m** _(SP 6.8 ≤45)_
 
@@ -137,15 +137,15 @@ _Overload factors and normative values per SP 107.13330 clause 5.14._
 ### 3.7. Geotechnical conditions and foundation
 
 {% if state.engineering.geotechnical %}
-- Foundation soil: **{{ state.engineering.geotechnical.soil_type }}**
+- Foundation soil: **{{ enum_label(state.engineering.geotechnical.soil_type, lang) }}**
 - Groundwater depth: **{{ state.engineering.geotechnical.groundwater_depth_m }} m**
-- Recommended foundation type: **{{ state.engineering.geotechnical.recommended_foundation }}**
+- Recommended foundation type: **{{ enum_label(state.engineering.geotechnical.recommended_foundation, lang) }}**
 - Minimum embedment depth: **{{ state.engineering.geotechnical.foundation_depth_min_m }} m**
 - Perimeter drainage: **{{ "required" if state.engineering.geotechnical.drainage_required else "not required" }}**
-- Waterproofing grade: **{{ state.engineering.geotechnical.waterproofing_grade }}**
+- Waterproofing grade: **{{ enum_label(state.engineering.geotechnical.waterproofing_grade, lang) }}**
 {% if state.engineering.geotechnical.notes %}
 
-> {{ state.engineering.geotechnical.notes }}
+> {{ t(state.engineering.geotechnical.notes_key, lang) if state.engineering.geotechnical.notes_key else state.engineering.geotechnical.notes }}
 {% endif %}
 
 _Preliminary recommendations. A proper engineering-geological survey per SP 47.13330 is required for working documentation._

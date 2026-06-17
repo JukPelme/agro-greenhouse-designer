@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from ..i18n import t
 from ..schemas.calc_results import WaterDemandResult
 from ..schemas.design import DesignVariant
 from ..schemas.project import ClimateData, CropType, GreenhouseType
@@ -41,7 +42,8 @@ def compute_water_demand(
         daily_demand_m3=round(daily_m3, 2),
         peak_hourly_m3=round(peak_hourly, 2),
         annual_demand_m3=round(annual_m3, 0),
-        irrigation_method="Капельное (по умолчанию)",
+        irrigation_method=t("irrigation_drip_default", "ru"),
+        irrigation_method_key="irrigation_drip_default",
         reliability_category=reliability,
         hose_service_radius_m=hose_radius,
     )

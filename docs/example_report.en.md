@@ -1,16 +1,16 @@
 # Pre-design solution: Тепличный комплекс «Заря»
 
 **Region:** Краснодарский край
-**Greenhouse type:** year_round
+**Greenhouse type:** year-round
 **Crop:** tomato
 **Target yield:** 500.0 t/year
-**Generated:** 2026-06-16 09:13
+**Generated:** 2026-06-17 04:02
 
 ---
 
 ## 1. Site inputs and analysis
 
-Целевая урожайность относительно участка: 25.0 кг/м²/год
+Target yield per plot area: 25.0 kg/m²/year
 
 **Climate parameters (per Russian SP 131.13330):**
 
@@ -28,23 +28,23 @@
 
 ## 2. Design solution (variant v1)
 
-**Rationale:** Для круглогодичного выращивания томатов на шпалере выбран многопролётный блочный тип теплицы (layout=block) со стеклянным ограждением: стекло обеспечивает максимальное светопропускание (τ≈0,88), что критично для зимнего периода Краснодарского края при невысоком зимнем солнечном излучении, а также соответствует требованиям к году эксплуатации без замены плёнки. Компоновка из двух блоков по всей длине участка позволяет разместить необходимую площадь выращивания с разрывом между блоками, соответствующим нормативу для зимних теплиц (≥6 м). Высота в коньке принята с запасом для шпалерного ведения томата (≥5,5 м по нормам для культур с подвязкой при круглогодичном режиме). Грунт — суглинок при глубине грунтовых вод 3 м: принят ленточный фундамент глубиной около 1 м с гидроизоляцией; дренаж в данном случае не требуется, так как УГВ значительно ниже критической отметки. Ограждение выполнено в светлых тонах для максимизации отражённого освещения внутри комплекса.
+**Rationale:** A year-round multi-span block-type greenhouse complex is selected to maximise usable growing area on a rectangular 200 × 100 m plot while maintaining efficient heating and structural economy. Glass cladding (τ ≈ 0.88) is chosen over polycarbonate or film because tomato requires the highest possible winter light transmission, critical at a Krasnodar latitude with only 3.8 MJ/m²/day solar radiation in winter. Two parallel blocks oriented along the plot length are arranged side by side across the width, with a service corridor gap between them; this layout keeps the footprint compact while allowing independent climate zones. Loam soil with a groundwater depth of 3.0 m (above the 2 m threshold) calls for strip foundations at 1 m embedment with waterproofing, but no perimeter drainage is required at this GWD. The trellis tomato culture demands a ridge height well above 5.5 m, so both blocks are designed with generous eave and ridge heights to accommodate overhead crop wires and internal machinery.
 
 **Total growing area:** 10368 m²
 **Complex footprint (with auxiliary):** 10368.0 m²
 
 ### Greenhouse blocks
 
-- **Блок А** — 96.0 × 54.0 m (area 5184 m²)
+- **Block A** — 96.0 × 54.0 m (area 5184 m²)
   - Heights: eave 4.0 m, ridge 6.0 m
-  - Layout: block, 6 spans of 9.0 m
+  - Layout: block (multi-span), 6 spans of 9.0 m
   - Roof: straight, slope 45.0%
-  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 12.0%
-- **Блок Б** — 96.0 × 54.0 m (area 5184 m²)
+  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 13.0%
+- **Block B** — 96.0 × 54.0 m (area 5184 m²)
   - Heights: eave 4.0 m, ridge 6.0 m
-  - Layout: block, 6 spans of 9.0 m
+  - Layout: block (multi-span), 6 spans of 9.0 m
   - Roof: straight, slope 45.0%
-  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 12.0%
+  - Covering: glass (τ=0.88), glass 4.0 mm  - Opaque structures share: 13.0%
 
 ### Complex structural parameters
 
@@ -56,11 +56,10 @@
 
 ### Auxiliary zones
 
-- **Котельная / энергоблок** — 120.0 m² (Размещение котлового оборудования для теплоснабжения комплекса (без газа — электро/твердотопливный резерв))
-- **Административно-бытовой корпус** — 200.0 m² (Офис, раздевалки, санузлы, комната отдыха персонала)
-- **Склад готовой продукции** — 180.0 m² (Хранение и первичная упаковка урожая томата перед отгрузкой)
-- **Склад материалов и инвентаря** — 100.0 m² (Хранение удобрений, средств защиты растений, инвентаря)
-- **Насосно-смесительный узел** — 60.0 m² (Приготовление и подача питательного раствора (капельный полив))
+- **Boiler house** — 120.0 m² (Heating plant and hot-water distribution for both blocks)
+- **Utility building** — 80.0 m² (Staff facilities, storage, and crop-handling area)
+- **Irrigation pump room** — 40.0 m² (Drip-irrigation mixing and pumping station)
+- **Guard post** — 20.0 m² (Security checkpoint at main entrance)
 
 ---
 
@@ -87,7 +86,7 @@
 - Daily demand: **46.66 m³/day**
 - Peak hourly: **5.83 m³/h**
 - Annual: **13997 m³/year**
-- Irrigation method: Капельное (по умолчанию)
+- Irrigation method: Drip (default)
 - Reliability category: **II** _(SP 6.14)_
 - Hose service radius: **40.0 m** _(SP 6.8 ≤45)_
 
@@ -128,7 +127,7 @@ _Overload factors and normative values per SP 107.13330 clause 5.14._
 - Perimeter drainage: **not required**
 - Waterproofing grade: **standard**
 
-> Суглинок — ленточный фундамент с гидроизоляцией; дренаж при высоком УГВ.
+> Loam — strip foundation with waterproofing; drainage if groundwater table is high.
 
 _Preliminary recommendations. A proper engineering-geological survey per SP 47.13330 is required for working documentation._
 
@@ -138,7 +137,14 @@ _Preliminary recommendations. A proper engineering-geological survey per SP 47.1
 
 Rules checked: **34**
 
-✓ All checked SP 107.13330 requirements satisfied.
+### WARNING — ENG.2-aux-share
+
+Подсобные зоны должны занимать 5–30% площади комплекса. Меньше — нехватка для обслуживания; больше — неэффективное использование участка.
+
+- Actual: `2.507716049382716`
+- Required: `[5.0, 30.0]`
+- **Source** _(SP 107.13330, original Russian text)_: Инженерная проверка (не из СП): обоснованная доля подсобок
+
 
 ---
 

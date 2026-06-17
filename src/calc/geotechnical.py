@@ -22,35 +22,34 @@ def compute_geotechnical(site: SiteParameters) -> GeotechnicalResult:
     soil = site.soil_type
     gwd = site.groundwater_depth_m
 
+    from ..i18n import t
+
     if soil == SoilType.ROCKY:
         foundation = "slab"
-        depth = 0.5  # rocky needs little embedment, monolithic slab on prepared layer
-        notes = "Скальный грунт — монолитная плита на подготовленном слое; затратное бурение."
+        depth = 0.5
+        notes_key = "geotech_rocky"
     elif soil == SoilType.SAND:
         foundation = "strip"
         depth = 0.7
-        notes = "Песок — ленточный фундамент мелкого заложения, дренаж по периметру обычно не требуется."
+        notes_key = "geotech_sand"
     elif soil == SoilType.LOAM:
         foundation = "strip"
         depth = 1.0
-        notes = "Суглинок — ленточный фундамент с гидроизоляцией; дренаж при высоком УГВ."
+        notes_key = "geotech_loam"
     elif soil == SoilType.CLAY:
         if gwd < 1.5:
             foundation = "pile"
             depth = 3.0
-            notes = (
-                "Глина с высоким УГВ — пучинистый грунт. Свайный фундамент "
-                "с заглублением ниже глубины промерзания; усиленная гидроизоляция и "
-                "обязательный периметральный дренаж."
-            )
+            notes_key = "geotech_clay_high_water"
         else:
             foundation = "strip"
             depth = 1.5
-            notes = "Глина — ленточный фундамент глубокого заложения, гидроизоляция."
+            notes_key = "geotech_clay_dry"
     else:
         foundation = "strip"
         depth = 1.0
-        notes = "Грунт не классифицирован — принят ленточный фундамент 1 м, требуется уточнение."
+        notes_key = "geotech_unknown"
+    notes = t(notes_key, "ru")  # fallback raw text for non-templated consumers
 
     drainage_required = (
         gwd < 1.0
@@ -68,4 +67,5 @@ def compute_geotechnical(site: SiteParameters) -> GeotechnicalResult:
         drainage_required=drainage_required,
         waterproofing_grade=waterproofing,
         notes=notes,
+        notes_key=notes_key,
     )

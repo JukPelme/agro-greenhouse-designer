@@ -46,39 +46,34 @@ BAD_BRIEF = ProjectBrief(
 
 
 def main() -> None:
-    raw = graph.invoke({"brief": BAD_BRIEF}, {"recursion_limit": 25})
-    state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
-
-    # Use a dedicated variant_id so failed-case charts don't overwrite happy-case.
-    state.design.variant_id = "failed_v1"
-
-    # Re-render the charts into a separate directory and re-build the report.
-    chart_dir = ROOT / "docs" / "charts" / "failed_v1"
-    chart_files = render_all(state, chart_dir)
-    chart_rel = {
-        name: f"charts/{state.design.variant_id}/{fname}"
-        for name, fname in chart_files.items()
-        if fname
-    }
-
+    # Two graph runs — one per language — for the failed case as well.
     from src.agents.reporter import reporter_node
 
     out_dir = ROOT / "demo_cache"
     out_dir.mkdir(exist_ok=True)
     docs_dir = ROOT / "docs"
 
+    final_state = None
     for lang in ("ru", "en"):
-        state.lang = lang
+        raw = graph.invoke({"brief": BAD_BRIEF, "lang": lang}, {"recursion_limit": 25})
+        state = GraphState(**{k: v for k, v in raw.items() if k != "messages"})
+        state.design.variant_id = "failed_v1"
+        chart_dir = ROOT / "docs" / "charts" / "failed_v1"
+        render_all(state, chart_dir)
+
+        # Re-render with reporter_node so charts dir and language are in sync
         result = reporter_node(state)
         state.report_markdown = result["report_markdown"]
         state.report_pdf_path = result.get("report_pdf_path")
 
         json_out = out_dir / f"failed_run.{lang}.json"
         json_out.write_text(state.model_dump_json(indent=2, exclude={"messages"}), encoding="utf-8")
-
         md_out = docs_dir / f"failed_example.{lang}.md"
         md_out.write_text(state.report_markdown, encoding="utf-8")
         print(f"  {lang}: {json_out.name}, report {len(state.report_markdown)} chars")
+        final_state = state
+
+    state = final_state
 
     (out_dir / "failed_run.json").write_text(
         (out_dir / "failed_run.ru.json").read_text(encoding="utf-8"), encoding="utf-8"
@@ -96,7 +91,7 @@ def main() -> None:
 
     n_errors = sum(1 for i in state.validation.issues if i.severity.value == "error")
     print("Failed-case: ru/en JSON saved in demo_cache/")
-    print(f"Charts: {chart_dir} ({len(chart_files)} files)")
+    print(f"Charts: {chart_dir}")
     print(f"Iterations: {state.iteration} / max {state.max_iterations}")
     print(f"Validation: {len(state.validation.issues)} issues ({n_errors} errors)")
     for issue in state.validation.issues[:6]:

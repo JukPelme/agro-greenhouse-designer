@@ -56,6 +56,7 @@ class WaterDemandResult(BaseModel):
     peak_hourly_m3: float
     annual_demand_m3: float
     irrigation_method: str
+    irrigation_method_key: str = Field(default="", description="i18n key, e.g. 'irrigation_drip_default'")
 
     # СП 107.13330 п. 6.14 / п. 6.8
     reliability_category: Literal[1, 2, 3] = Field(
@@ -151,6 +152,7 @@ class GeotechnicalResult(BaseModel):
     drainage_required: bool = Field(..., description="Нужен ли периметральный дренаж")
     waterproofing_grade: str = Field(..., description="standard / enhanced")
     notes: str = Field(default="")
+    notes_key: str = Field(default="", description="i18n key for the notes; preferred over raw text")
 
 
 class EngineeringReport(BaseModel):

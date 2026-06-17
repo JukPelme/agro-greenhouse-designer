@@ -22,6 +22,8 @@ def analyst_node(state: GraphState) -> dict:
     region = state.brief.site.region
     climate = lookup_climate(region)
 
+    from ..i18n import t
+
     notes_parts: list[str] = []
     if climate is None:
         return {
@@ -29,17 +31,17 @@ def analyst_node(state: GraphState) -> dict:
             "analyst_notes": "Аналитик отказался: нет климатических данных.",
         }
 
-    # Sanity checks — early signals for Designer.
     brief = state.brief
     target_yield_per_m2 = brief.target_annual_yield_t * 1000 / brief.site.plot_area_m2
+    lang = state.lang
     notes_parts.append(
-        f"Целевая урожайность относительно участка: {target_yield_per_m2:.1f} кг/м²/год"
+        t("analyst_yield_per_m2", lang, value=f"{target_yield_per_m2:.1f}")
     )
     if target_yield_per_m2 > 60:
-        notes_parts.append("⚠ Целевая урожайность очень высокая — потребуется интенсивная технология.")
+        notes_parts.append(t("analyst_high_yield_warning", lang))
 
     if brief.site.plot_length_m * brief.site.plot_width_m < brief.site.plot_area_m2 * 0.9:
-        notes_parts.append("⚠ Указанные размеры участка не сходятся с заявленной площадью (>10%).")
+        notes_parts.append(t("analyst_dimensions_mismatch", lang))
 
     return {
         "climate": climate,

@@ -49,10 +49,15 @@ def reporter_node(state: GraphState) -> dict:
         # Fallback to Russian if requested language template doesn't exist.
         template = _env().get_template("report.ru.md.j2")
 
+    from ..i18n import enum_label, t
+
     md = template.render(
         state=state,
+        lang=state.lang,
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),
         charts=chart_rel,
+        enum_label=enum_label,
+        t=t,
     )
 
     # Also write a PDF next to the Markdown so the report ships as one file.
