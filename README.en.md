@@ -286,6 +286,31 @@ agro-greenhouse-designer/
 
 ---
 
+## Observability — LangSmith trace
+
+[![Trace](https://img.shields.io/badge/trace-langsmith-ff6b35.svg)](https://smith.langchain.com/public/a01d47f7-0c9d-4c5c-ad22-3e123d09670c/r)
+
+Full trace of one graph run (opens without an account): every node, timings,
+tokens, cost, inputs and outputs. Illustrates the core project pattern —
+**LLM only runs inside Designer; everything else is deterministic Python**:
+
+| Node | Wall time | LLM |
+| --- | --- | --- |
+| Analyst | instant | — |
+| Designer | ~21 s | Claude Sonnet 4.6 |
+| Engineer | instant | — |
+| Validator | ~1.6 s | RAG, not LLM |
+| Reporter | ~3.5 s | — |
+
+**Total ≈ 27 s / 5.3K tokens / $0.03 per run.** 80% of the wall clock and
+100% of the spend goes to Designer; everything else is pure Python.
+
+![LangSmith trace](docs/langsmith_trace.png)
+
+Activated by three env vars (see [.env.example](.env.example)):
+`LANGSMITH_API_KEY`, `LANGSMITH_TRACING=true`, `LANGSMITH_PROJECT`.
+LangGraph emits traces automatically — no code changes.
+
 ## API key safety in live mode
 
 Live mode requires the visitor to paste an `ANTHROPIC_API_KEY` into the

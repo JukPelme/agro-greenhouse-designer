@@ -257,6 +257,32 @@ agro-greenhouse-designer/
 
 ---
 
+## Observability — LangSmith trace
+
+[![Trace](https://img.shields.io/badge/trace-langsmith-ff6b35.svg)](https://smith.langchain.com/public/a01d47f7-0c9d-4c5c-ad22-3e123d09670c/r)
+
+Полный trace одного прогона графа (открывается без аккаунта): каждая нода
+дерева, время каждого шага, токены, стоимость, входы и выходы. Иллюстрирует
+ключевой паттерн проекта — **LLM работает только в Designer, остальное
+детерминированный Python**:
+
+| Узел | Время | LLM |
+| --- | --- | --- |
+| Analyst | мгновенно | — |
+| Designer | ~21 с | Claude Sonnet 4.6 |
+| Engineer | мгновенно | — |
+| Validator | ~1.6 с | RAG, не LLM |
+| Reporter | ~3.5 с | — |
+
+**Итого ≈ 27 с / 5.3K токенов / $0.03 за прогон.** 80% времени и 100% денег
+на Designer; всё остальное — pure Python.
+
+![LangSmith trace](docs/langsmith_trace.png)
+
+Активируется тремя env-переменными (см. [.env.example](.env.example)):
+`LANGSMITH_API_KEY`, `LANGSMITH_TRACING=true`, `LANGSMITH_PROJECT`.
+LangGraph отправляет трейсы автоматически — никаких правок в коде.
+
 ## Безопасность API-ключа в live-режиме
 
 Live-режим требует от посетителя вставить свой `ANTHROPIC_API_KEY` в сайдбар.
